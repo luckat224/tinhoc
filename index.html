@@ -801,10 +801,14 @@
             // Xáo trộn quizData
             quizData.sort(() => Math.random() - 0.5);
             
-            // Xáo trộn đáp án MC
+            // Xáo trộn đáp án MC và các câu con của TF
             quizData.forEach(question => {
                 if (question.type === 'mc' && question.options) {
                     question.options.sort(() => Math.random() - 0.5);
+                }
+                // *** ĐÃ THÊM ***
+                if (question.type === 'tf' && question.statements) {
+                    question.statements.sort(() => Math.random() - 0.5);
                 }
             });
             
