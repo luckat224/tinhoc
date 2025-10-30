@@ -155,7 +155,7 @@
                 type: 'mc',
                 question: '2. Thiết bị cơ bản của mạng có dây là:',
                 options: ['Cáp mạng, Switch', 'Access Point, Modem', 'Switch, Modem', 'Access Point, cáp mạng'],
-                answer: 'Access Point, Modem' // Đáp án B
+                answer: 'Cáp mạng, Switch' // *** ĐÃ SỬA *** (Đáp án A)
             },
             {
                 type: 'mc',
@@ -198,7 +198,7 @@
                 type: 'mc',
                 question: '9. Đơn vị đo dung lượng thông tin nhỏ nhất là gì?',
                 options: ['Byte', 'Digit', 'Kilobyte', 'Bit'],
-                answer: 'Bit' // Đáp án D
+                answer: 'Byte' // *** ĐÃ SỬA *** (Đáp án A)
             },
             {
                 type: 'mc',
@@ -323,7 +323,7 @@
                 type: 'mc',
                 question: '30. Xe cứu thương phát còi tín hiệu để người tham gia giao thông nhường đường. Em hãy cho biết thông tin đó có dạng gì?',
                 options: ['Hình ảnh', 'Âm thanh', 'Hình ảnh và âm thanh', 'Chữ và âm thanh'],
-                answer: 'Hình ảnh và âm thanh' // Đáp án C (Còi là âm thanh, xe là hình ảnh)
+                answer: 'Âm thanh' // *** ĐÃ SỬA *** (Đáp án B)
             },
             // --- Phần II: Trắc nghiệm Đúng/Sai (Từ ảnh 3 & 4) ---
             {
@@ -333,7 +333,7 @@
                     { text: 'A. Kết nối nhanh chóng, tiện lợi, dễ dàng thêm thiết bị mới', answer: true },
                     { text: 'B. Tín hiệu mạng ổn định, không bị ảnh hưởng bởi yếu tố thời tiết.', answer: false },
                     { text: 'C. Không cần dây cáp.', answer: true },
-                    { text: 'D. Không hạn chế số lượng thiết bị kết nối.', answer: false }
+                    { text: 'D. Không hạn chế số lượng thiết bị kết nối.', answer: true } // *** ĐÃ SỬA ***
                 ]
             },
             {
@@ -387,8 +387,9 @@
             {
                 type: 'short',
                 question: 'PHẦN III - Câu 3: Nêu ba thành phần của mạng máy tính?',
-                keywords: ['thiết bị đầu cuối', 'thiết bị kết nối', 'môi trường truyền dẫn'],
-                explanation: 'Các thành phần của mạng máy tính: <br>1. Các thiết bị đầu cuối (máy tính, máy in...) <br>2. Các thiết bị kết nối (Switch, Modem...) <br>3. Môi trường truyền dẫn (dây cáp, sóng...)'
+                // *** ĐÃ SỬA ***
+                keywords: ['máy tính', 'thiết bị', 'gửi', 'nhận', 'thiết bị mạng', 'kết nối', 'phần mềm', 'giao tiếp', 'truyền thông tin'],
+                explanation: '- các máy tính và thiết bị có khả năng gửi và nhận thông tin qua mạng<br>- các thiết bị mạng có chức năng kết nối các máy tính với nhau<br>- những phần mềm giúp giao tiếp và truyền thông tin qua mạng'
             },
             {
                 type: 'short',
@@ -660,7 +661,7 @@
 
             const card = quizContainer.querySelector(`.quiz-card[data-index='${index}']`);
             const input = card.querySelector('textarea');
-            const userAnswer = input.value.toLowerCase().trim();
+            const userAnswer = input.value.toLowerCase().trim().replace(/-\s/g, ''); // Xóa gạch đầu dòng và khoảng trắng
             input.disabled = true;
 
             let allKeywordsFound = true;
