@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đề Cương Ôn Tập Tin Học (Nâng cao)</title>
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -90,10 +90,18 @@
             margin-bottom: 1.5rem; padding: 1.5rem;
         }
         .static-card-option {
-             padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.5rem;
+            padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.5rem;
         }
         .static-card-option.correct {
             border-color: #22c55e; background-color: #dcfce7; color: #15803d; font-weight: 600;
+        }
+
+        /* --- *** THÊM MỚI: Kiểu cho Sub-header (Số liệu) *** --- */
+        .subheader-panel {
+            display: none; /* Ẩn mặc định */
+        }
+        .subheader-panel.active {
+            display: block; /* Hiện khi active */
         }
     </style>
 </head>
@@ -101,6 +109,8 @@
 
     <!-- Thanh header cố định -->
     <header class="sticky top-0 z-50 bg-gray-100/95 backdrop-blur-sm shadow-md">
+        
+        <!-- PHẦN 1: Tiêu đề và Tabs (Không đổi) -->
         <div class="container max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-4">
             
             <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Đề Cương Ôn Tập Tin Học</h1>
@@ -117,8 +127,58 @@
                     <i class="fas fa-redo"></i> Làm Lại Câu Sai (MC)
                 </button>
             </nav>
-
         </div>
+
+        <!-- PHẦN 2: "Số liệu" (Nội dung được dời vào đây) -->
+        <div class="container max-w-3xl mx-auto px-4 sm:px-6 md:px-8 py-4">
+            
+            <!-- "Số liệu" cho Tab 1 -->
+            <div id="subheader-all" class="subheader-panel active">
+                <div id="controls-all" class_ ="flex flex-col sm:flex-row gap-2 justify-center mb-6">
+                    <button id="shuffle-btn" class="w-full sm:w-auto mb-2 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                        <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+                    </button>
+                    <button id="total-reset-btn" class="w-full sm:w-auto mb-2 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                        <i class="fas fa-sync-alt"></i> Reset tổng (Tab này)
+                    </button>
+                </div>
+                <div id="progress-container-all" class="bg-white p-4 rounded-lg shadow text-center">
+                    <span id="progress-text-all" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
+                    <span class="mx-3 text-gray-300">|</span>
+                    <span id="score-tracker-all" class="text-lg font-medium text-red-600">Câu sai: 0</span>
+                </div>
+            </div>
+
+            <!-- "Số liệu" cho Tab 2 -->
+            <div id="subheader-wrong" class="subheader-panel">
+                <div class="bg-white p-4 rounded-lg shadow text-center">
+                    <p class="text-lg font-medium text-gray-700 mb-3">
+                        Đây là danh sách <strong id="wrong-history-count" class="text-red-600">0</strong> câu bạn đã từng làm sai.
+                    </p>
+                    <button id="clear-history-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200">
+                        <i class="fas fa-trash-alt"></i> Xóa Lịch Sử Lỗi Sai
+                    </button>
+                </div>
+            </div>
+
+            <!-- "Số liệu" cho Tab 3 -->
+            <div id="subheader-redo" class="subheader-panel">
+                <div id="controls-redo" class="flex flex-col sm:flex-row gap-2 justify-center mb-6">
+                    <button id="shuffle-btn-redo" class="w-full sm:w-auto mb-2 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                        <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+                    </button>
+                    <button id="reset-btn-redo" class="w-full sm:w-auto mb-2 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                        <i class="fas fa-sync-alt"></i> Reset (Tab này)
+                    </button>
+                </div>
+                <div id="progress-container-redo" class="bg-white p-4 rounded-lg shadow text-center">
+                    <span id="progress-text-redo" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
+                    <span class="mx-3 text-gray-300">|</span>
+                    <span id="score-tracker-redo" class="text-lg font-medium text-red-600">Câu sai: 0</span>
+                </div>
+            </div>
+        </div>
+        <!-- Kết thúc phần "Số liệu" -->
     </header>
 
     <!-- Thân trang (nội dung cuộn) -->
@@ -126,24 +186,7 @@
 
         <!-- === TAB 1: TẤT CẢ CÂU HỎI === -->
         <div id="tab-panel-all" class="tab-panel active">
-            <!-- Khu vực điều khiển tổng -->
-            <div id="controls-all" class_ ="flex flex-col sm:flex-row gap-2 justify-center mb-6">
-                <button id="shuffle-btn" class="w-full sm:w-auto mb-2 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
-                    <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
-                </button>
-                <button id="total-reset-btn" class="w-full sm:w-auto mb-2 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
-                    <i class="fas fa-sync-alt"></i> Reset tổng (Tab này)
-                </button>
-            </div>
-
-            <!-- Khu vực tiến độ -->
-            <div id="progress-container-all" class="bg-white p-4 rounded-lg shadow text-center mb-6">
-                <span id="progress-text-all" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
-                <span class="mx-3 text-gray-300">|</span>
-                <span id="score-tracker-all" class="text-lg font-medium text-red-600">Câu sai: 0</span>
-            </div>
-            
-            <!-- Khu vực câu hỏi -->
+            <!-- "Số liệu" đã được dời lên header -->
             <div id="quiz-container-all">
                 <!-- Câu hỏi cho tab "Tất Cả" sẽ được tải vào đây -->
             </div>
@@ -151,15 +194,7 @@
 
         <!-- === TAB 2: NHỮNG CÂU HAY SAI === -->
         <div id="tab-panel-wrong" class="tab-panel">
-            <div class="bg-white p-4 rounded-lg shadow text-center mb-6">
-                <p class="text-lg font-medium text-gray-700 mb-3">
-                    Đây là danh sách <strong id="wrong-history-count" class="text-red-600">0</strong> câu bạn đã từng làm sai.
-                </p>
-                <button id="clear-history-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200">
-                    <i class="fas fa-trash-alt"></i> Xóa Lịch Sử Lỗi Sai
-                </button>
-            </div>
-            <!-- Khu vực câu hỏi tĩnh -->
+            <!-- "Số liệu" đã được dời lên header -->
             <div id="quiz-container-wrong">
                 <!-- Các câu hỏi TĨNH (chỉ xem) sẽ được tải vào đây -->
             </div>
@@ -167,25 +202,7 @@
 
         <!-- === TAB 3: LÀM LẠI CÂU SAI (MC) === -->
         <div id="tab-panel-redo" class="tab-panel">
-            
-            <!-- *** THÊM KHU VỰC ĐIỀU KHIỂN CHO TAB 3 *** -->
-            <div id="controls-redo" class="flex flex-col sm:flex-row gap-2 justify-center mb-6">
-                <button id="shuffle-btn-redo" class="w-full sm:w-auto mb-2 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
-                    <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
-                </button>
-                <button id="reset-btn-redo" class="w-full sm:w-auto mb-2 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
-                    <i class="fas fa-sync-alt"></i> Reset (Tab này)
-                </button>
-            </div>
-            <!-- *** KẾT THÚC PHẦN THÊM MỚI *** -->
-
-            <!-- Khu vực tiến độ -->
-            <div id="progress-container-redo" class="bg-white p-4 rounded-lg shadow text-center mb-6">
-                <span id="progress-text-redo" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
-                <span class="mx-3 text-gray-300">|</span>
-                <span id="score-tracker-redo" class="text-lg font-medium text-red-600">Câu sai: 0</span>
-            </div>
-            <!-- Khu vực câu hỏi -->
+            <!-- "Số liệu" đã được dời lên header -->
             <div id="quiz-container-redo">
                 <!-- Câu hỏi cho tab "Làm Lại" sẽ được tải vào đây -->
             </div>
@@ -488,7 +505,7 @@
                 this.incorrectQuestions.clear();
 
                 if (this.quizData.length === 0) {
-                     this.container.innerHTML = `<p class="text-center text-gray-500 italic">Không có câu hỏi nào để hiển thị.</p>`;
+                    this.container.innerHTML = `<p class="text-center text-gray-500 italic">Không có câu hỏi nào để hiển thị.</p>`;
                 }
 
                 this.quizData.forEach((question, index) => {
@@ -854,22 +871,32 @@
          * Xóa toàn bộ lịch sử lỗi sai
          */
         function clearWrongHistory() {
-            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử lỗi sai không? Hành động này không thể hoàn tác.')) {
-                wrongQuestionHistory.clear();
-                saveWrongHistory();
-                // Tải lại nội dung các tab
-                renderWrongHistoryTab();
-                if (redoQuiz) {
-                    redoQuiz.container.innerHTML = ''; // Xóa quiz cũ
-                    redoQuiz = null; // Hủy instance
-                }
-                renderRedoMcTab(); // Vẽ lại tab (sẽ báo rỗng)
+            // *** SỬA LỖI: Bỏ qua confirm() vì nó bị chặn ***
+            // if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử lỗi sai không? Hành động này không thể hoàn tác.')) {
+            //     wrongQuestionHistory.clear();
+            //     saveWrongHistory();
+            //     // Tải lại nội dung các tab
+            //     renderWrongHistoryTab();
+            //     if (redoQuiz) {
+            //         redoQuiz.container.innerHTML = ''; // Xóa quiz cũ
+            //         redoQuiz = null; // Hủy instance
+            //     }
+            //     renderRedoMcTab(); // Vẽ lại tab (sẽ báo rỗng)
+            // }
+            // Tạm thời chỉ xóa, không hỏi
+            wrongQuestionHistory.clear();
+            saveWrongHistory();
+            renderWrongHistoryTab();
+            if (redoQuiz) {
+                redoQuiz.container.innerHTML = '';
+                redoQuiz = null;
             }
+            renderRedoMcTab();
         }
 
         /**
-        * Vẽ nội dung cho tab "Những Câu Hay Sai" (TĨNH)
-        */
+         * Vẽ nội dung cho tab "Những Câu Hay Sai" (TĨNH)
+         */
         function renderWrongHistoryTab() {
             const container = document.getElementById('quiz-container-wrong');
             container.innerHTML = '';
@@ -897,19 +924,19 @@
                 else {
                     // Hiển thị đáp án cho các loại khác
                     if (question.explanation) {
-                         contentHtml = `<div class="static-card-option correct !text-left !font-normal"><strong>Đáp án:</strong><br>${question.explanation}</div>`;
+                        contentHtml = `<div class="static-card-option correct !text-left !font-normal"><strong>Đáp án:</strong><br>${question.explanation}</div>`;
                     } else if (question.type === 'tf') {
-                         contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
-                         question.statements.forEach(s => {
+                        contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
+                        question.statements.forEach(s => {
                             contentHtml += `<li><strong>${s.text}:</strong> ${s.answer ? 'Đúng' : 'Sai'}</li>`;
-                         });
-                         contentHtml += '</ul></div>';
+                        });
+                        contentHtml += '</ul></div>';
                     } else if (question.type === 'fill') {
                         contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
-                         question.fills.forEach(f => {
+                        question.fills.forEach(f => {
                             contentHtml += `<li><strong>${f.q}</strong> ${f.a} ${f.s}</li>`;
-                         });
-                         contentHtml += '</ul></div>';
+                        });
+                        contentHtml += '</ul></div>';
                     }
                 }
 
@@ -959,9 +986,21 @@
                 btn.classList.remove('active');
             });
 
+            // *** THÊM MỚI ***
+            // Ẩn tất cả sub-headers
+            document.querySelectorAll('.subheader-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // *** KẾT THÚC THÊM MỚI ***
+
             // Hiển thị panel và button được chọn
             document.getElementById(`tab-panel-${tabName}`).classList.add('active');
             document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+
+            // *** THÊM MỚI ***
+            // Hiển thị sub-header được chọn
+            document.getElementById(`subheader-${tabName}`).classList.add('active');
+            // *** KẾT THÚC THÊM MỚI ***
 
             // Tải nội dung cho tab nếu cần
             if (tabName === 'wrong') {
@@ -1017,4 +1056,3 @@
     </script>
 </body>
 </html>
-
