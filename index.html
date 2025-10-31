@@ -2,147 +2,199 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đề Cương Ôn Tập Tin Học</title>
+    <meta name="viewport" content="width=device-width, initial-scale-1.0">
+    <title>Đề Cương Ôn Tập Tin Học (Nâng cao)</title>
     <!-- Tải Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Tải thư viện icon (cho nút reset) -->
+    <!-- Tải thư viện icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
-        /* Sử dụng font Inter từ Tailwind */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6; /* bg-gray-100 */
+            background-color: #f3f4f6;
         }
 
         /* --- Kiểu nút tùy chọn --- */
-        .option-btn {
-            transition: all 0.2s;
-        }
-        .option-btn:disabled {
-            cursor: not-allowed;
-            opacity: 0.9;
-        }
+        .option-btn { transition: all 0.2s; }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
 
         /* --- Kiểu phản hồi --- */
         .correct {
-            background-color: #dcfce7 !important; /* bg-green-100 */
-            border-color: #22c55e !important; /* border-green-500 */
-            color: #15803d; /* text-green-800 */
-            font-weight: 600;
+            background-color: #dcfce7 !important; border-color: #22c55e !important;
+            color: #15803d; font-weight: 600;
         }
         .incorrect {
-            background-color: #fee2e2 !important; /* bg-red-100 */
-            border-color: #ef4444 !important; /* border-red-500 */
-            color: #b91c1c; /* text-red-800 */
-            font-weight: 600;
+            background-color: #fee2e2 !important; border-color: #ef4444 !important;
+            color: #b91c1c; font-weight: 600;
         }
 
         /* --- Kiểu input tự luận/điền từ --- */
-        .short-answer-input.correct {
-            border-color: #22c55e;
-            background-color: #dcfce7;
-        }
-        .short-answer-input.incorrect {
-            border-color: #ef4444;
-            background-color: #fee2e2;
-        }
+        .short-answer-input.correct { border-color: #22c55e; background-color: #dcfce7; }
+        .short-answer-input.incorrect { border-color: #ef4444; background-color: #fee2e2; }
 
         /* --- Kiểu Đúng/Sai (TF) --- */
         .tf-input { display: none; }
         .tf-label {
-            cursor: pointer;
-            padding: 0.75rem 1.5rem;
-            border: 1px solid #d1d5db; /* border-gray-300 */
-            border-radius: 0.5rem; /* rounded-lg */
-            transition: all 0.2s;
+            cursor: pointer; padding: 0.75rem 1.5rem; border: 1px solid #d1d5db;
+            border-radius: 0.5rem; transition: all 0.2s;
         }
         .tf-input:checked + .tf-label {
-            background-color: #dbeafe; /* bg-blue-100 */
-            border-color: #3b82f6; /* border-blue-500 */
-            font-weight: 600;
+            background-color: #dbeafe; border-color: #3b82f6; font-weight: 600;
         }
-        .tf-input:disabled + .tf-label {
-            cursor: not-allowed;
-            opacity: 0.8;
-        }
+        .tf-input:disabled + .tf-label { cursor: not-allowed; opacity: 0.8; }
         .tf-label.correct {
-            background-color: #dcfce7 !important;
-            border-color: #22c55e !important;
-            color: #15803d;
+            background-color: #dcfce7 !important; border-color: #22c55e !important; color: #15803d;
         }
         .tf-label.incorrect {
-            background-color: #fee2e2 !important;
-            border-color: #ef4444 !important;
-            color: #b91c1c;
+            background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c;
         }
 
         /* --- Thẻ câu hỏi --- */
         .quiz-card {
-            background-color: white;
-            border-radius: 0.75rem; /* rounded-xl */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-lg */
-            margin-bottom: 1.5rem; /* mb-6 */
-            padding: 1.5rem; /* p-6 */
+            background-color: white; border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem; padding: 1.5rem;
         }
         
         /* --- Nút Reset (cho từng câu) --- */
         .question-reset-btn {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            color: #6b7280; /* text-gray-500 */
-            background: #f3f4f6; /* bg-gray-100 */
-            border-radius: 9999px; /* rounded-full */
-            width: 2rem;
-            height: 2rem;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            position: absolute; top: 1rem; right: 1rem; color: #6b7280;
+            background: #f3f4f6; border-radius: 9999px; width: 2rem; height: 2rem;
+            display: inline-flex; align-items: center; justify-content: center;
             transition: all 0.2s;
         }
-        .question-reset-btn:hover {
-            color: #1f2937; /* text-gray-800 */
-            background: #e5e7eb; /* bg-gray-200 */
+        .question-reset-btn:hover { color: #1f2937; background: #e5e7eb; }
+
+        /* --- Kiểu Tabs --- */
+        .tab-btn {
+            padding: 0.75rem 1.25rem; font-medium; border-bottom: 4px solid transparent;
+            color: #6b7280; /* text-gray-500 */
+        }
+        .tab-btn:hover {
+            background-color: #e5e7eb; /* bg-gray-200 */
+        }
+        .tab-btn.active {
+            color: #1d4ed8; /* text-blue-700 */
+            border-bottom-color: #2563eb; /* border-blue-600 */
+        }
+        .tab-panel {
+            display: none; /* Ẩn mặc định */
+        }
+        .tab-panel.active {
+            display: block; /* Hiện khi active */
+        }
+
+        /* --- Thẻ câu hỏi tĩnh (cho tab Lỗi Sai) --- */
+        .static-card {
+            background: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem; padding: 1.5rem;
+        }
+        .static-card-option {
+             padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.5rem;
+        }
+        .static-card-option.correct {
+            border-color: #22c55e; background-color: #dcfce7; color: #15803d; font-weight: 600;
         }
     </style>
 </head>
 <body class="text-gray-800">
 
     <!-- Thanh header cố định -->
-    <header class="sticky top-0 z-50 bg-gray-100/95 backdrop-blur-sm shadow-md py-4">
-        <div class="container max-w-3xl mx-auto px-4 sm:px-6 md:px-8">
+    <header class="sticky top-0 z-50 bg-gray-100/95 backdrop-blur-sm shadow-md">
+        <div class="container max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-4">
+            
             <h1 class="text-3xl font-bold text-center text-blue-700 mb-6">Đề Cương Ôn Tập Tin Học</h1>
 
-            <!-- Khu vực điều khiển tổng -->
-            <div id="controls" class="flex flex-col sm:flex-row gap-2 justify-center mb-6">
-                <button id="shuffle-btn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
-                    <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+            <!-- Thanh Tabs -->
+            <nav class="flex border-b border-gray-300">
+                <button id="tab-btn-all" class="tab-btn active" data-tab="all">
+                    <i class="fas fa-list-ul"></i> Tất Cả Câu Hỏi
                 </button>
-                <button id="total-reset-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
-                    <i class="fas fa-sync-alt"></i> Reset tổng
+                <button id="tab-btn-wrong" class="tab-btn" data-tab="wrong">
+                    <i class="fas fa-exclamation-triangle"></i> Những Câu Hay Sai
                 </button>
-            </div>
+                <button id="tab-btn-redo" class="tab-btn" data-tab="redo">
+                    <i class="fas fa-redo"></i> Làm Lại Câu Sai (MC)
+                </button>
+            </nav>
 
-            <!-- Khu vực tiến độ -->
-            <div id="progress-container" class="bg-white p-4 rounded-lg shadow text-center">
-                <span id="progress-text" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 38</span>
-                <span class="mx-3 text-gray-300">|</span>
-                <span id="score-tracker" class="text-lg font-medium text-red-600">Câu sai: 0</span>
-            </div>
         </div>
     </header>
 
     <!-- Thân trang (nội dung cuộn) -->
     <main class="container max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
-        <!-- Khu vực câu hỏi -->
-        <div id="quiz-container">
-            <!-- Các câu hỏi sẽ được tải vào đây bằng JavaScript -->
+
+        <!-- === TAB 1: TẤT CẢ CÂU HỎI === -->
+        <div id="tab-panel-all" class="tab-panel active">
+            <!-- Khu vực điều khiển tổng -->
+            <div id="controls-all" class_ ="flex flex-col sm:flex-row gap-2 justify-center mb-6">
+                <button id="shuffle-btn" class="w-full sm:w-auto mb-2 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                    <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+                </button>
+                <button id="total-reset-btn" class="w-full sm:w-auto mb-2 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                    <i class="fas fa-sync-alt"></i> Reset tổng (Tab này)
+                </button>
+            </div>
+
+            <!-- Khu vực tiến độ -->
+            <div id="progress-container-all" class="bg-white p-4 rounded-lg shadow text-center mb-6">
+                <span id="progress-text-all" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
+                <span class="mx-3 text-gray-300">|</span>
+                <span id="score-tracker-all" class="text-lg font-medium text-red-600">Câu sai: 0</span>
+            </div>
+            
+            <!-- Khu vực câu hỏi -->
+            <div id="quiz-container-all">
+                <!-- Câu hỏi cho tab "Tất Cả" sẽ được tải vào đây -->
+            </div>
         </div>
+
+        <!-- === TAB 2: NHỮNG CÂU HAY SAI === -->
+        <div id="tab-panel-wrong" class="tab-panel">
+            <div class="bg-white p-4 rounded-lg shadow text-center mb-6">
+                <p class="text-lg font-medium text-gray-700 mb-3">
+                    Đây là danh sách <strong id="wrong-history-count" class="text-red-600">0</strong> câu bạn đã từng làm sai.
+                </p>
+                <button id="clear-history-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200">
+                    <i class="fas fa-trash-alt"></i> Xóa Lịch Sử Lỗi Sai
+                </button>
+            </div>
+            <!-- Khu vực câu hỏi tĩnh -->
+            <div id="quiz-container-wrong">
+                <!-- Các câu hỏi TĨNH (chỉ xem) sẽ được tải vào đây -->
+            </div>
+        </div>
+
+        <!-- === TAB 3: LÀM LẠI CÂU SAI (MC) === -->
+        <div id="tab-panel-redo" class="tab-panel">
+            
+            <!-- *** THÊM KHU VỰC ĐIỀU KHIỂN CHO TAB 3 *** -->
+            <div id="controls-redo" class="flex flex-col sm:flex-row gap-2 justify-center mb-6">
+                <button id="shuffle-btn-redo" class="w-full sm:w-auto mb-2 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                    <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+                </button>
+                <button id="reset-btn-redo" class="w-full sm:w-auto mb-2 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg shadow transition duration-200 flex-1">
+                    <i class="fas fa-sync-alt"></i> Reset (Tab này)
+                </button>
+            </div>
+            <!-- *** KẾT THÚC PHẦN THÊM MỚI *** -->
+
+            <!-- Khu vực tiến độ -->
+            <div id="progress-container-redo" class="bg-white p-4 rounded-lg shadow text-center mb-6">
+                <span id="progress-text-redo" class="text-lg font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
+                <span class="mx-3 text-gray-300">|</span>
+                <span id="score-tracker-redo" class="text-lg font-medium text-red-600">Câu sai: 0</span>
+            </div>
+            <!-- Khu vực câu hỏi -->
+            <div id="quiz-container-redo">
+                <!-- Câu hỏi cho tab "Làm Lại" sẽ được tải vào đây -->
+            </div>
+        </div>
+
     </main>
 
     <script>
-        // --- DỮ LIỆU CÂU HỎI ---
+        // --- DỮ LIỆU CÂU HỎI GỐC ---
         const originalQuizData = [
             // --- Phần I: Trắc nghiệm (Từ ảnh 1 & 2 & 3) ---
             {
@@ -398,439 +450,571 @@
                 explanation: 'Gồm 3 bước: <br>1. Xử lí đầu vào (Nhận thông tin) <br>2. Xử lí dữ liệu (Xử lí thông tin) <br>3. Xử lí đầu ra (Xuất thông tin)'
             }
         ];
-        
-        let quizData = JSON.parse(JSON.stringify(originalQuizData));
-        
-        // --- BIẾN TRẠNG THÁI ---
-        let questionStatus = []; // Mảng lưu trạng thái: null, 'correct', 'incorrect'
-        let incorrectQuestions = new Set(); // Set lưu index của các câu sai
 
-        // --- DOM ELEMENTS ---
-        const quizContainer = document.getElementById('quiz-container');
-        const progressText = document.getElementById('progress-text');
-        const scoreTracker = document.getElementById('score-tracker');
-        const shuffleBtn = document.getElementById('shuffle-btn');
-        const totalResetBtn = document.getElementById('total-reset-btn');
+        // --- DỮ LIỆU GỐC (THÊM CHỈ SỐ GỐC) ---
+        // Rất quan trọng để theo dõi lỗi sai ngay cả khi đã xáo trộn
+        const originalDataWithIndices = originalQuizData.map((q, i) => ({
+            ...q,
+            originalIndex: i // Thêm index gốc vào mỗi câu hỏi
+        }));
 
-        // --- CHỨC NĂNG KHỞI TẠO ---
-        
-        /**
-         * Khởi tạo toàn bộ bài quiz
-         */
-        function initQuiz() {
-            quizContainer.innerHTML = '';
-            questionStatus = new Array(quizData.length).fill(null);
-            incorrectQuestions.clear();
 
-            quizData.forEach((question, index) => {
-                const card = document.createElement('div');
-                card.className = 'quiz-card relative';
-                card.dataset.index = index;
+        // --- BIẾN TRẠNG THÁI TOÀN CỤC ---
+        let wrongQuestionHistory = new Set(); // Set chứa các 'originalIndex' của câu sai
+        let mainQuiz; // Instance cho tab "Tất Cả"
+        let redoQuiz; // Instance cho tab "Làm Lại"
 
-                // Nút Reset cho từng câu
-                const resetBtn = document.createElement('button');
-                resetBtn.className = 'question-reset-btn';
-                resetBtn.title = 'Làm lại câu này';
-                resetBtn.innerHTML = '<i class="fas fa-sync-alt fa-sm"></i>';
-                resetBtn.onclick = () => resetQuestion(index);
-                card.appendChild(resetBtn);
-
-                // Tiêu đề câu hỏi
-                const questionTitle = document.createElement('h2');
-                questionTitle.className = 'text-xl font-semibold mb-2 pr-10'; // Thêm padding để không bị che bởi nút reset
-                questionTitle.innerHTML = question.question;
-                card.appendChild(questionTitle);
-
-                // Gợi ý hình ảnh (nếu có)
-                if (question.imageNote) {
-                    const note = document.createElement('p');
-                    note.innerText = question.imageNote;
-                    note.className = 'text-sm text-gray-500 italic mb-4';
-                    card.appendChild(note);
-                }
-
-                // Tạo nội dung câu hỏi
-                switch (question.type) {
-                    case 'mc':
-                        createMultipleChoice(question, index, card);
-                        break;
-                    case 'tf':
-                        createTrueFalse(question, index, card);
-                        break;
-                    case 'short':
-                        createShortAnswer(question, index, card);
-                        break;
-                    case 'fill':
-                        createFillInBlank(question, index, card);
-                        break;
-                }
+        // --- LỚP QUẢN LÝ QUIZ (Đã refactor) ---
+        class Quiz {
+            constructor(questionsData, containerId, progressTextId, scoreTrackerId) {
+                this.originalData = JSON.parse(JSON.stringify(questionsData)); // Dữ liệu gốc cho instance này
+                this.quizData = JSON.parse(JSON.stringify(questionsData)); // Dữ liệu làm việc (có thể xáo trộn)
                 
-                quizContainer.appendChild(card);
-            });
-
-            updateProgress();
-        }
-
-        // --- CÁC HÀM TẠO CÂU HỎI ---
-
-        function createMultipleChoice(question, index, card) {
-            const optionsContainer = document.createElement('div');
-            optionsContainer.className = 'space-y-3';
-            
-            question.options.forEach(option => {
-                const button = document.createElement('button');
-                button.innerText = option;
-                button.className = 'option-btn w-full text-left p-4 my-2 rounded-lg border border-gray-300 hover:bg-gray-100';
-                button.onclick = () => checkMultipleChoice(button, option, question.answer, index);
-                optionsContainer.appendChild(button);
-            });
-            card.appendChild(optionsContainer);
-        }
-        
-        function createTrueFalse(question, index, card) {
-            const statementsContainer = document.createElement('div');
-            statementsContainer.className = 'space-y-4';
-            statementsContainer.dataset.type = 'tf-container';
-
-            question.statements.forEach((statement, s_index) => {
-                const group = document.createElement('div');
-                group.className = 'p-4 border border-gray-200 rounded-lg';
+                this.container = document.getElementById(containerId);
+                this.progressText = document.getElementById(progressTextId);
+                this.scoreTracker = document.getElementById(scoreTrackerId);
                 
-                const text = document.createElement('p');
-                text.className = 'mb-3 font-medium';
-                text.innerText = statement.text;
-                group.appendChild(text);
-
-                const buttonGroup = document.createElement('div');
-                buttonGroup.className = 'flex gap-4';
-                
-                const trueId = `tf-${index}-${s_index}-true`;
-                const falseId = `tf-${index}-${s_index}-false`;
-                const name = `tf-group-${index}-${s_index}`;
-
-                // Nút Đúng
-                buttonGroup.innerHTML += `
-                    <input type="radio" id="${trueId}" name="${name}" value="true" class="tf-input">
-                    <label for="${trueId}" class="tf-label">Đúng</label>
-                `;
-                // Nút Sai
-                buttonGroup.innerHTML += `
-                    <input type="radio" id="${falseId}" name="${name}" value="false" class="tf-input">
-                    <label for="${falseId}" class="tf-label">Sai</label>
-                `;
-                
-                group.appendChild(buttonGroup);
-                statementsContainer.appendChild(group);
-            });
-            card.appendChild(statementsContainer);
-            
-            // Nút kiểm tra cho TF
-            const checkBtn = document.createElement('button');
-            checkBtn.innerText = 'Kiểm tra';
-            checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
-            checkBtn.onclick = () => checkTrueFalse(question, index);
-            card.appendChild(checkBtn);
-        }
-        
-        function createShortAnswer(question, index, card) {
-            const input = document.createElement('textarea');
-            input.className = 'short-answer-input w-full p-3 border border-gray-300 rounded-lg h-32 focus:ring-2 focus:ring-blue-500 focus:outline-none';
-            input.placeholder = 'Nhập câu trả lời của bạn...';
-            card.appendChild(input);
-            
-            // Nút kiểm tra
-            const checkBtn = document.createElement('button');
-            checkBtn.innerText = 'Kiểm tra';
-            checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
-            checkBtn.onclick = () => checkShortAnswer(question, index);
-            card.appendChild(checkBtn);
-            
-            // Nơi hiển thị đáp án
-            const explanationDiv = document.createElement('div');
-            explanationDiv.className = 'explanation-div mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden';
-            card.appendChild(explanationDiv);
-        }
-        
-        function createFillInBlank(question, index, card) {
-            const fillContainer = document.createElement('div');
-            fillContainer.className = 'space-y-3';
-            fillContainer.dataset.type = 'fill-container';
-            
-            question.fills.forEach((fill, f_index) => {
-                const div = document.createElement('div');
-                div.className = 'flex items-center gap-2';
-                div.innerHTML = `
-                    <label class="font-medium">${fill.q}</label>
-                    <input type="text" data-index="${f_index}" class="short-answer-input w-24 p-2 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <span class="font-medium">${fill.s}</span>
-                `;
-                fillContainer.appendChild(div);
-            });
-            card.appendChild(fillContainer);
-            
-            // Nút kiểm tra
-            const checkBtn = document.createElement('button');
-            checkBtn.innerText = 'Kiểm tra';
-            checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
-            checkBtn.onclick = () => checkFillInBlank(question, index);
-            card.appendChild(checkBtn);
-        }
-
-        // --- CÁC HÀM KIỂM TRA ĐÁP ÁN ---
-
-        function checkMultipleChoice(clickedButton, selectedOption, correctAnswer, index) {
-            if (questionStatus[index] !== null) return; // Đã trả lời
-
-            const card = clickedButton.closest('.quiz-card');
-            const allButtons = card.querySelectorAll('.option-btn');
-            
-            allButtons.forEach(btn => {
-                btn.disabled = true;
-                if (btn.innerText === correctAnswer) {
-                    btn.classList.add('correct');
-                }
-            });
-
-            if (selectedOption === correctAnswer) {
-                clickedButton.classList.add('correct');
-                questionStatus[index] = 'correct';
-                incorrectQuestions.delete(index);
-            } else {
-                clickedButton.classList.add('incorrect');
-                questionStatus[index] = 'incorrect';
-                incorrectQuestions.add(index);
+                this.questionStatus = [];
+                this.incorrectQuestions = new Set();
+                this.instanceId = containerId; // Dùng để tạo ID duy nhất cho các input radio
             }
-            
-            updateProgress();
-        }
-        
-        function checkTrueFalse(question, index) {
-            if (questionStatus[index] !== null) return;
 
-            const card = quizContainer.querySelector(`.quiz-card[data-index='${index}']`);
-            let allCorrect = true;
-            
-            question.statements.forEach((statement, s_index) => {
-                const name = `tf-group-${index}-${s_index}`;
-                const selectedRadio = card.querySelector(`input[name='${name}']:checked`);
-                
-                const trueLabel = card.querySelector(`label[for='tf-${index}-${s_index}-true']`);
-                const falseLabel = card.querySelector(`label[for='tf-${index}-${s_index}-false']`);
-                
-                let userAnswer = null;
-                if (selectedRadio) {
-                    userAnswer = (selectedRadio.value === 'true');
-                } else {
-                    allCorrect = false; // Bỏ lỡ
+            /**
+             * Khởi tạo và vẽ quiz lên DOM
+             */
+            init() {
+                this.container.innerHTML = '';
+                this.questionStatus = new Array(this.quizData.length).fill(null);
+                this.incorrectQuestions.clear();
+
+                if (this.quizData.length === 0) {
+                     this.container.innerHTML = `<p class="text-center text-gray-500 italic">Không có câu hỏi nào để hiển thị.</p>`;
                 }
-                
-                if (statement.answer === true) {
-                    trueLabel.classList.add('correct');
-                    if (userAnswer === false) {
-                        falseLabel.classList.add('incorrect');
-                        allCorrect = false;
-                    }
-                } else {
-                    falseLabel.classList.add('correct');
-                    if (userAnswer === true) {
-                        trueLabel.classList.add('incorrect');
-                        allCorrect = false;
-                    }
-                }
-                
-                // Vô hiệu hóa
-                card.querySelector(`#tf-${index}-${s_index}-true`).disabled = true;
-                card.querySelector(`#tf-${index}-${s_index}-false`).disabled = true;
-            });
-            
-            card.querySelector('.check-btn').classList.add('hidden');
-            
-            if (allCorrect) {
-                questionStatus[index] = 'correct';
-                incorrectQuestions.delete(index);
-            } else {
-                questionStatus[index] = 'incorrect';
-                incorrectQuestions.add(index);
-            }
-            
-            updateProgress();
-        }
 
-        function checkShortAnswer(question, index) {
-            if (questionStatus[index] !== null) return;
+                this.quizData.forEach((question, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'quiz-card relative';
+                    card.dataset.index = index; // Index trong instance này
 
-            const card = quizContainer.querySelector(`.quiz-card[data-index='${index}']`);
-            const input = card.querySelector('textarea');
-            const userAnswer = input.value.toLowerCase().trim().replace(/-\s/g, ''); // Xóa gạch đầu dòng và khoảng trắng
-            input.disabled = true;
+                    const resetBtn = document.createElement('button');
+                    resetBtn.className = 'question-reset-btn';
+                    resetBtn.title = 'Làm lại câu này';
+                    resetBtn.innerHTML = '<i class="fas fa-sync-alt fa-sm"></i>';
+                    resetBtn.onclick = () => this.resetQuestion(index);
+                    card.appendChild(resetBtn);
 
-            let allKeywordsFound = true;
-            if (userAnswer === "") {
-                allKeywordsFound = false;
-            } else {
-                question.keywords.forEach(keyword => {
-                    if (!userAnswer.includes(keyword.toLowerCase())) {
-                        allKeywordsFound = false;
+                    const questionTitle = document.createElement('h2');
+                    questionTitle.className = 'text-xl font-semibold mb-2 pr-10';
+                    questionTitle.innerHTML = question.question;
+                    card.appendChild(questionTitle);
+
+                    if (question.imageNote) {
+                        const note = document.createElement('p');
+                        note.innerText = question.imageNote;
+                        note.className = 'text-sm text-gray-500 italic mb-4';
+                        card.appendChild(note);
                     }
+
+                    switch (question.type) {
+                        case 'mc':
+                            this.createMultipleChoice(question, index, card);
+                            break;
+                        case 'tf':
+                            this.createTrueFalse(question, index, card);
+                            break;
+                        case 'short':
+                            this.createShortAnswer(question, index, card);
+                            break;
+                        case 'fill':
+                            this.createFillInBlank(question, index, card);
+                            break;
+                    }
+                    
+                    this.container.appendChild(card);
                 });
+
+                this.updateProgress();
             }
 
-            const explanationDiv = card.querySelector('.explanation-div');
-            explanationDiv.innerHTML = `<strong>Đáp án gợi ý:</strong><br>${question.explanation}`;
-            explanationDiv.classList.remove('hidden');
-            card.querySelector('.check-btn').classList.add('hidden');
-
-            if (allKeywordsFound) {
-                input.classList.add('correct');
-                questionStatus[index] = 'correct';
-                incorrectQuestions.delete(index);
-            } else {
-                input.classList.add('incorrect');
-                questionStatus[index] = 'incorrect';
-                incorrectQuestions.add(index);
-            }
-            
-            updateProgress();
-        }
-        
-        function checkFillInBlank(question, index) {
-            if (questionStatus[index] !== null) return;
-            
-            const card = quizContainer.querySelector(`.quiz-card[data-index='${index}']`);
-            let allCorrect = true;
-            
-            question.fills.forEach((fill, f_index) => {
-                const input = card.querySelector(`input[data-index='${f_index}']`);
-                const userAnswer = input.value.trim();
-                input.disabled = true;
+            // --- CÁC HÀM TẠO CÂU HỎI ---
+            createMultipleChoice(question, index, card) {
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'space-y-3';
                 
-                if (userAnswer === fill.a) {
+                question.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.innerText = option;
+                    button.className = 'option-btn w-full text-left p-4 my-2 rounded-lg border border-gray-300 hover:bg-gray-100';
+                    // Gán sự kiện check
+                    button.onclick = () => this.checkMultipleChoice(button, option, question.answer, index);
+                    optionsContainer.appendChild(button);
+                });
+                card.appendChild(optionsContainer);
+            }
+            
+            createTrueFalse(question, index, card) {
+                const statementsContainer = document.createElement('div');
+                statementsContainer.className = 'space-y-4';
+
+                question.statements.forEach((statement, s_index) => {
+                    const group = document.createElement('div');
+                    group.className = 'p-4 border border-gray-200 rounded-lg';
+                    group.innerHTML = `<p class="mb-3 font-medium">${statement.text}</p>`;
+
+                    const buttonGroup = document.createElement('div');
+                    buttonGroup.className = 'flex gap-4';
+                    
+                    const trueId = `tf-${this.instanceId}-${index}-${s_index}-true`;
+                    const falseId = `tf-${this.instanceId}-${index}-${s_index}-false`;
+                    const name = `tf-group-${this.instanceId}-${index}-${s_index}`;
+
+                    buttonGroup.innerHTML = `
+                        <input type="radio" id="${trueId}" name="${name}" value="true" class="tf-input">
+                        <label for="${trueId}" class="tf-label">Đúng</label>
+                        <input type="radio" id="${falseId}" name="${name}" value="false" class="tf-input">
+                        <label for="${falseId}" class="tf-label">Sai</label>
+                    `;
+                    
+                    group.appendChild(buttonGroup);
+                    statementsContainer.appendChild(group);
+                });
+                card.appendChild(statementsContainer);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.innerText = 'Kiểm tra';
+                checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
+                checkBtn.onclick = () => this.checkTrueFalse(question, index);
+                card.appendChild(checkBtn);
+            }
+            
+            createShortAnswer(question, index, card) {
+                const input = document.createElement('textarea');
+                input.className = 'short-answer-input w-full p-3 border border-gray-300 rounded-lg h-32 focus:ring-2 focus:ring-blue-500 focus:outline-none';
+                input.placeholder = 'Nhập câu trả lời của bạn...';
+                card.appendChild(input);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.innerText = 'Kiểm tra';
+                checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
+                checkBtn.onclick = () => this.checkShortAnswer(question, index);
+                card.appendChild(checkBtn);
+                
+                const explanationDiv = document.createElement('div');
+                explanationDiv.className = 'explanation-div mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden';
+                card.appendChild(explanationDiv);
+            }
+            
+            createFillInBlank(question, index, card) {
+                const fillContainer = document.createElement('div');
+                fillContainer.className = 'space-y-3';
+                
+                question.fills.forEach((fill, f_index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex items-center gap-2';
+                    div.innerHTML = `
+                        <label class="font-medium">${fill.q}</label>
+                        <input type="text" data-index="${f_index}" class="short-answer-input w-24 p-2 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <span class="font-medium">${fill.s}</span>
+                    `;
+                    fillContainer.appendChild(div);
+                });
+                card.appendChild(fillContainer);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.innerText = 'Kiểm tra';
+                checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
+                checkBtn.onclick = () => this.checkFillInBlank(question, index);
+                card.appendChild(checkBtn);
+            }
+
+            // --- CÁC HÀM KIỂM TRA ĐÁP ÁN ---
+            // (index là index trong instance này)
+            checkMultipleChoice(clickedButton, selectedOption, correctAnswer, index) {
+                if (this.questionStatus[index] !== null) return;
+
+                const card = clickedButton.closest('.quiz-card');
+                const allButtons = card.querySelectorAll('.option-btn');
+                allButtons.forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.innerText === correctAnswer) btn.classList.add('correct');
+                });
+
+                if (selectedOption === correctAnswer) {
+                    clickedButton.classList.add('correct');
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    clickedButton.classList.add('incorrect');
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+            
+            checkTrueFalse(question, index) {
+                if (this.questionStatus[index] !== null) return;
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                let allCorrect = true;
+                
+                question.statements.forEach((statement, s_index) => {
+                    const name = `tf-group-${this.instanceId}-${index}-${s_index}`;
+                    const selectedRadio = card.querySelector(`input[name='${name}']:checked`);
+                    const trueLabel = card.querySelector(`label[for='tf-${this.instanceId}-${index}-${s_index}-true']`);
+                    const falseLabel = card.querySelector(`label[for='tf-${this.instanceId}-${index}-${s_index}-false']`);
+                    
+                    let userAnswer = (selectedRadio) ? (selectedRadio.value === 'true') : null;
+                    if (userAnswer === null) allCorrect = false;
+                    
+                    if (statement.answer === true) {
+                        trueLabel.classList.add('correct');
+                        if (userAnswer === false) { falseLabel.classList.add('incorrect'); allCorrect = false; }
+                    } else {
+                        falseLabel.classList.add('correct');
+                        if (userAnswer === true) { trueLabel.classList.add('incorrect'); allCorrect = false; }
+                    }
+                    
+                    card.querySelector(`#tf-${this.instanceId}-${index}-${s_index}-true`).disabled = true;
+                    card.querySelector(`#tf-${this.instanceId}-${index}-${s_index}-false`).disabled = true;
+                });
+                
+                card.querySelector('.check-btn').classList.add('hidden');
+                
+                if (allCorrect) {
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+
+            checkShortAnswer(question, index) {
+                if (this.questionStatus[index] !== null) return;
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                const input = card.querySelector('textarea');
+                const userAnswer = input.value.toLowerCase().trim().replace(/-\s/g, '');
+                input.disabled = true;
+
+                let allKeywordsFound = (userAnswer !== "") && question.keywords.every(keyword => userAnswer.includes(keyword.toLowerCase()));
+
+                const explanationDiv = card.querySelector('.explanation-div');
+                explanationDiv.innerHTML = `<strong>Đáp án gợi ý:</strong><br>${question.explanation}`;
+                explanationDiv.classList.remove('hidden');
+                card.querySelector('.check-btn').classList.add('hidden');
+
+                if (allKeywordsFound) {
                     input.classList.add('correct');
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
                 } else {
                     input.classList.add('incorrect');
-                    allCorrect = false;
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
                 }
-            });
+                this.updateProgress();
+            }
             
-            card.querySelector('.check-btn').classList.add('hidden');
+            checkFillInBlank(question, index) {
+                if (this.questionStatus[index] !== null) return;
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                let allCorrect = true;
+                
+                question.fills.forEach((fill, f_index) => {
+                    const input = card.querySelector(`input[data-index='${f_index}']`);
+                    const userAnswer = input.value.trim();
+                    input.disabled = true;
+                    if (userAnswer === fill.a) {
+                        input.classList.add('correct');
+                    } else {
+                        input.classList.add('incorrect');
+                        allCorrect = false;
+                    }
+                });
+                
+                card.querySelector('.check-btn').classList.add('hidden');
+                
+                if (allCorrect) {
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+
+            /**
+             * Đánh dấu câu hỏi là sai trong Lịch sử toàn cục
+             */
+            markAsWrongInHistory(localIndex) {
+                const originalIndex = this.quizData[localIndex].originalIndex;
+                if (!wrongQuestionHistory.has(originalIndex)) {
+                    wrongQuestionHistory.add(originalIndex);
+                    saveWrongHistory(); // Lưu vào localStorage
+                }
+            }
             
-            if (allCorrect) {
-                questionStatus[index] = 'correct';
-                incorrectQuestions.delete(index);
+            // --- CÁC HÀM TIỆN ÍCH CỦA INSTANCE ---
+            resetQuestion(index) {
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                if (!card) return;
+                
+                const wasIncorrect = this.questionStatus[index] === 'incorrect';
+                this.questionStatus[index] = null;
+                if (wasIncorrect) {
+                    this.incorrectQuestions.delete(index);
+                }
+                
+                card.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('correct', 'incorrect'); btn.disabled = false;
+                });
+                card.querySelectorAll('.tf-input').forEach(input => {
+                    input.checked = false; input.disabled = false;
+                });
+                card.querySelectorAll('.tf-label').forEach(label => {
+                    label.classList.remove('correct', 'incorrect');
+                });
+                card.querySelectorAll('textarea').forEach(input => {
+                    input.value = ''; input.disabled = false; input.classList.remove('correct', 'incorrect');
+                });
+                card.querySelectorAll('.explanation-div').forEach(div => {
+                    div.classList.add('hidden'); div.innerHTML = '';
+                });
+                card.querySelectorAll('input[type="text"]').forEach(input => {
+                    input.value = ''; input.disabled = false; input.classList.remove('correct', 'incorrect');
+                });
+                card.querySelectorAll('.check-btn').forEach(btn => {
+                    btn.classList.remove('hidden');
+                });
+
+                this.updateProgress();
+            }
+
+            updateProgress() {
+                const completedCount = this.questionStatus.filter(s => s !== null).length;
+                this.progressText.innerText = `Đã hoàn thành: ${completedCount} / ${this.quizData.length}`;
+                
+                const incorrectCount = this.incorrectQuestions.size;
+                this.scoreTracker.innerText = `Câu sai: ${incorrectCount}`;
+            }
+
+            shuffle() {
+                this.quizData.sort(() => Math.random() - 0.5);
+                this.quizData.forEach(question => {
+                    if (question.type === 'mc' && question.options) {
+                        question.options.sort(() => Math.random() - 0.5);
+                    }
+                    if (question.type === 'tf' && question.statements) {
+                        question.statements.sort(() => Math.random() - 0.5);
+                    }
+                });
+                this.init();
+            }
+
+            reset() {
+                this.quizData = JSON.parse(JSON.stringify(this.originalData));
+                this.init();
+            }
+        } // --- HẾT LỚP QUIZ ---
+
+
+        // --- CÁC HÀM QUẢN LÝ TAB VÀ LỊCH SỬ ---
+
+        /**
+         * Tải lịch sử lỗi sai từ localStorage
+         */
+        function loadWrongHistory() {
+            const storedHistory = localStorage.getItem('wrongQuestionIndices');
+            if (storedHistory) {
+                wrongQuestionHistory = new Set(JSON.parse(storedHistory));
             } else {
-                questionStatus[index] = 'incorrect';
-                incorrectQuestions.add(index);
+                wrongQuestionHistory = new Set();
+            }
+        }
+
+        /**
+         * Lưu lịch sử lỗi sai vào localStorage
+         */
+        function saveWrongHistory() {
+            localStorage.setItem('wrongQuestionIndices', JSON.stringify(Array.from(wrongQuestionHistory)));
+            // Cập nhật số đếm trên tab "Hay Sai"
+            document.getElementById('wrong-history-count').innerText = wrongQuestionHistory.size;
+        }
+
+        /**
+         * Xóa toàn bộ lịch sử lỗi sai
+         */
+        function clearWrongHistory() {
+            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ lịch sử lỗi sai không? Hành động này không thể hoàn tác.')) {
+                wrongQuestionHistory.clear();
+                saveWrongHistory();
+                // Tải lại nội dung các tab
+                renderWrongHistoryTab();
+                if (redoQuiz) {
+                    redoQuiz.container.innerHTML = ''; // Xóa quiz cũ
+                    redoQuiz = null; // Hủy instance
+                }
+                renderRedoMcTab(); // Vẽ lại tab (sẽ báo rỗng)
+            }
+        }
+
+        /**
+        * Vẽ nội dung cho tab "Những Câu Hay Sai" (TĨNH)
+        */
+        function renderWrongHistoryTab() {
+            const container = document.getElementById('quiz-container-wrong');
+            container.innerHTML = '';
+            document.getElementById('wrong-history-count').innerText = wrongQuestionHistory.size;
+
+            if (wrongQuestionHistory.size === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 italic">Tuyệt vời! Bạn chưa làm sai câu nào.</p>`;
+                return;
+            }
+
+            for (const index of wrongQuestionHistory) {
+                const question = originalQuizData[index]; // Lấy từ data gốc, không có index
+                if (!question) continue;
+
+                const card = document.createElement('div');
+                card.className = 'static-card';
+                
+                let contentHtml = '';
+                if (question.type === 'mc') {
+                    question.options.forEach(option => {
+                        const isCorrect = (option === question.answer);
+                        contentHtml += `<div class="static-card-option ${isCorrect ? 'correct' : ''}">${option}</div>`;
+                    });
+                }
+                else {
+                    // Hiển thị đáp án cho các loại khác
+                    if (question.explanation) {
+                         contentHtml = `<div class="static-card-option correct !text-left !font-normal"><strong>Đáp án:</strong><br>${question.explanation}</div>`;
+                    } else if (question.type === 'tf') {
+                         contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
+                         question.statements.forEach(s => {
+                            contentHtml += `<li><strong>${s.text}:</strong> ${s.answer ? 'Đúng' : 'Sai'}</li>`;
+                         });
+                         contentHtml += '</ul></div>';
+                    } else if (question.type === 'fill') {
+                        contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
+                         question.fills.forEach(f => {
+                            contentHtml += `<li><strong>${f.q}</strong> ${f.a} ${f.s}</li>`;
+                         });
+                         contentHtml += '</ul></div>';
+                    }
+                }
+
+                card.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">${question.question}</h2>
+                    <div>${contentHtml}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        /**
+         * Vẽ nội dung cho tab "Làm Lại Câu Sai (MC)" (TƯƠNG TÁC)
+         */
+        function renderRedoMcTab() {
+            // Lọc các câu MC bị sai từ dữ liệu gốc
+            const redoData = originalDataWithIndices.filter(q => 
+                q.type === 'mc' && wrongQuestionHistory.has(q.originalIndex)
+            );
+
+            // Nếu có quiz làm lại cũ, hủy nó đi
+            if (redoQuiz) {
+                redoQuiz.container.innerHTML = '';
+                redoQuiz = null;
             }
             
-            updateProgress();
+            // Tạo một instance Quiz mới cho các câu hỏi này
+            redoQuiz = new Quiz(
+                redoData,
+                'quiz-container-redo',
+                'progress-text-redo',
+                'score-tracker-redo'
+            );
+            redoQuiz.init();
         }
-        
-        // --- CÁC HÀM TIỆN ÍCH ---
 
         /**
-         * Đặt lại một câu hỏi cụ thể
+         * Chuyển đổi giữa các tab
          */
-        function resetQuestion(index) {
-            const card = quizContainer.querySelector(`.quiz-card[data-index='${index}']`);
-            if (!card) return;
-            
-            // Reset trạng thái
-            const wasIncorrect = questionStatus[index] === 'incorrect';
-            questionStatus[index] = null;
-            // Cập nhật lại set câu sai nếu câu này trước đó sai
-            if (wasIncorrect) {
-                incorrectQuestions.delete(index);
+        function showTab(tabName) {
+            // Ẩn tất cả panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // Bỏ active tất cả tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Hiển thị panel và button được chọn
+            document.getElementById(`tab-panel-${tabName}`).classList.add('active');
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+
+            // Tải nội dung cho tab nếu cần
+            if (tabName === 'wrong') {
+                renderWrongHistoryTab();
+            } else if (tabName === 'redo') {
+                renderRedoMcTab();
             }
-            
-            // Reset MC
-            card.querySelectorAll('.option-btn').forEach(btn => {
-                btn.classList.remove('correct', 'incorrect');
-                btn.disabled = false;
-            });
-            
-            // Reset TF
-            card.querySelectorAll('.tf-input').forEach(input => {
-                input.checked = false;
-                input.disabled = false;
-            });
-            card.querySelectorAll('.tf-label').forEach(label => {
-                label.classList.remove('correct', 'incorrect');
-            });
-
-            // Reset Short Answer
-            card.querySelectorAll('textarea').forEach(input => {
-                input.value = '';
-                input.disabled = false;
-                input.classList.remove('correct', 'incorrect');
-            });
-            card.querySelectorAll('.explanation-div').forEach(div => {
-                div.classList.add('hidden');
-                div.innerHTML = '';
-            });
-            
-            // Reset Fill
-            card.querySelectorAll('input[type="text"]').forEach(input => {
-                input.value = '';
-                input.disabled = false;
-                input.classList.remove('correct', 'incorrect');
-            });
-
-            // Hiện lại nút Check (nếu có)
-            card.querySelectorAll('.check-btn').forEach(btn => {
-                btn.classList.remove('hidden');
-            });
-
-            updateProgress();
         }
 
-        /**
-         * Cập nhật thanh tiến độ
-         */
-        function updateProgress() {
-            const completedCount = questionStatus.filter(s => s !== null).length;
-            progressText.innerText = `Đã hoàn thành: ${completedCount} / ${quizData.length}`;
-            
-            const incorrectCount = incorrectQuestions.size;
-            scoreTracker.innerText = `Câu sai: ${incorrectCount}`;
-        }
+        // --- KHỞI ĐỘNG KHI TẢI TRANG ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWrongHistory(); // Tải lịch sử lỗi sai
 
-        /**
-         * Xáo trộn câu hỏi và đáp án
-         */
-        function shuffleQuiz() {
-            // Xáo trộn quizData
-            quizData.sort(() => Math.random() - 0.5);
+            // --- Gắn sự kiện cho các nút điều khiển ---
+            // Tab 1 (Tất Cả)
+            document.getElementById('shuffle-btn').addEventListener('click', () => mainQuiz.shuffle());
+            document.getElementById('total-reset-btn').addEventListener('click', () => mainQuiz.reset());
+            // Tab 2 (Hay Sai)
+            document.getElementById('clear-history-btn').addEventListener('click', clearWrongHistory);
             
-            // Xáo trộn đáp án MC và các câu con của TF
-            quizData.forEach(question => {
-                if (question.type === 'mc' && question.options) {
-                    question.options.sort(() => Math.random() - 0.5);
+            // *** GẮN SỰ KIỆN CHO TAB 3 ***
+            document.getElementById('shuffle-btn-redo').addEventListener('click', () => {
+                if (redoQuiz) {
+                    redoQuiz.shuffle();
                 }
-                // *** ĐÃ THÊM ***
-                if (question.type === 'tf' && question.statements) {
-                    question.statements.sort(() => Math.random() - 0.5);
+            });
+            document.getElementById('reset-btn-redo').addEventListener('click', () => {
+                // Khi reset tab 3, chúng ta muốn nó tải lại các câu sai hiện tại
+                // thay vì quay về trạng thái ban đầu (có thể rỗng)
+                if (redoQuiz) {
+                    renderRedoMcTab(); 
                 }
             });
             
-            initQuiz();
-        }
+            // --- Gắn sự kiện cho các nút Tab ---
+            document.getElementById('tab-btn-all').addEventListener('click', () => showTab('all'));
+            document.getElementById('tab-btn-wrong').addEventListener('click', () => showTab('wrong'));
+            document.getElementById('tab-btn-redo').addEventListener('click', () => showTab('redo'));
 
-        /**
-         * Reset tổng
-         */
-        function totalReset() {
-            // Khôi phục dữ liệu gốc (nếu đã bị xáo trộn)
-            quizData = JSON.parse(JSON.stringify(originalQuizData));
-            initQuiz();
-        }
-
-        // --- EVENT LISTENERS ---
-        shuffleBtn.addEventListener('click', shuffleQuiz);
-        totalResetBtn.addEventListener('click', totalReset);
-
-        // --- BẮT ĐẦU QUIZ ---
-        document.addEventListener('DOMContentLoaded', initQuiz);
+            // --- Khởi tạo Quiz chính (Tab "Tất Cả") ---
+            mainQuiz = new Quiz(
+                originalDataWithIndices, // Dùng data đã có index gốc
+                'quiz-container-all',
+                'progress-text-all',
+                'score-tracker-all'
+            );
+            mainQuiz.init();
+            
+            // Cập nhật số đếm ban đầu
+            document.getElementById('wrong-history-count').innerText = wrongQuestionHistory.size;
+        });
 
     </script>
 </body>
 </html>
+
