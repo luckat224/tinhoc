@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Cương Ôn Tập KHTN 6</title>
+    <!-- Tải Tailwind CSS --><script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải thư viện icon --><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        /* --- Kiểu nút tùy chọn --- */
+        .option-btn { transition: all 0.2s; }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
+
+        /* --- Kiểu phản hồi --- */
+        .correct {
+            background-color: #dcfce7 !important; border-color: #22c55e !important;
+            color: #15803d; font-weight: 600;
+        }
+        .incorrect {
+            background-color: #fee2e2 !important; border-color: #ef4444 !important;
+            color: #b91c1c; font-weight: 600;
+        }
+
+        /* --- Kiểu input tự luận/điền từ --- */
+        .short-answer-input.correct { border-color: #22c55e; background-color: #dcfce7; }
+        .short-answer-input.incorrect { border-color: #ef4444; background-color: #fee2e2; }
+
+        /* --- Kiểu Đúng/Sai (TF) --- */
+        .tf-input { display: none; }
+        .tf-label {
+            cursor: pointer; padding: 0.75rem 1.5rem; border: 1px solid #d1d5db;
+            border-radius: 0.5rem; transition: all 0.2s;
+        }
+        .tf-input:checked + .tf-label {
+            background-color: #dbeafe; border-color: #3b82f6; font-weight: 600;
+        }
+        .tf-input:disabled + .tf-label { cursor: not-allowed; opacity: 0.8; }
+        .tf-label.correct {
+            background-color: #dcfce7 !important; border-color: #22c55e !important; color: #15803d;
+        }
+        .tf-label.incorrect {
+            background-color: #fee2e2 !important; border-color: #ef4444 !important; color: #b91c1c;
+        }
+
+        /* --- Thẻ câu hỏi --- */
+        .quiz-card {
+            background-color: white; border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 1.5rem; padding: 1.5rem;
+        }
+        
+        /* --- Nút Reset (cho từng câu) --- */
+        .question-reset-btn {
+            position: absolute; top: 1rem; right: 1rem; color: #6b7280;
+            background: #f3f4f6; border-radius: 9999px; width: 2rem; height: 2rem;
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .question-reset-btn:hover { color: #1f2937; background: #e5e7eb; }
+
+        /* --- Kiểu Tabs (Đã chỉnh sửa) --- */
+        .tab-btn {
+            padding: 0.5rem 1rem; /* Tăng padding 1 chút */
+            font-size: 0.875rem; /* text-sm */
+            font-medium; border-bottom: 4px solid transparent;
+            color: #6b7280;
+        }
+        .tab-btn:hover {
+            background-color: #e5e7eb;
+        }
+        .tab-btn.active {
+            color: #1d4ed8;
+            border-bottom-color: #2563eb;
+        }
+        .tab-panel {
+            display: none;
+        }
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* --- Thẻ câu hỏi tĩnh (cho tab Lỗi Sai) --- */
+        .static-card {
+            background: white; border-radius: 0.75rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem; padding: 1.5rem;
+        }
+        .static-card-option {
+            padding: 0.75rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; margin-top: 0.5rem;
+        }
+        .static-card-option.correct {
+            border-color: #22c55e; background-color: #dcfce7; color: #15803d; font-weight: 600;
+        }
+
+        /* --- Kiểu cho Sub-header (Số liệu) --- */
+        .subheader-panel {
+            display: none;
+        }
+        .subheader-panel.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Thanh header cố định --><header class="sticky top-0 z-50 bg-gray-100/95 backdrop-blur-sm shadow-md">
+        
+        <!-- PHẦN 1: Tiêu đề và Tabs --><div class="container max-w-3xl mx-auto px-4 sm:px-6 md:px-8 pt-2">
+            
+            <h1 class="text-xl font-bold text-center text-blue-700 mb-2">Đề Cương Ôn Tập KHTN 6</h1>
+
+            <!-- Thanh Tabs --><nav class="flex border-b border-gray-300">
+                <button id="tab-btn-all" class="tab-btn active" data-tab="all">
+                    <i class="fas fa-list-ul"></i> Tất Cả Câu Hỏi
+                </button>
+                <button id="tab-btn-wrong" class="tab-btn" data-tab="wrong">
+                    <i class="fas fa-exclamation-triangle"></i> Những Câu Hay Sai
+                </button>
+                <button id="tab-btn-redo" class="tab-btn" data-tab="redo">
+                    <i class="fas fa-redo"></i> Làm Lại Câu Sai (MC)
+                </button>
+            </nav>
+        </div>
+
+        <!-- PHẦN 2: "Số liệu" (Nội dung được dời vào đây) --><div class="container max-w-3xl mx-auto px-4 sm:px-6 md:px-8 py-2">
+            
+            <!-- "Số liệu" cho Tab 1 --><div id="subheader-all" class="subheader-panel active">
+                <div id="controls-all" class_ ="flex flex-col sm:flex-row gap-2 justify-center mb-2">
+                    <button id="shuffle-btn" class="w-full sm:w-auto mb-1 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg shadow transition duration-200 flex-1 text-sm">
+                        <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+                    </button>
+                    <button id="total-reset-btn" class="w-full sm:w-auto mb-1 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg shadow transition duration-200 flex-1 text-sm">
+                        <i class="fas fa-sync-alt"></i> Reset (Tab này)
+                    </button>
+                </div>
+                <div id="progress-container-all" class="bg-white p-2 rounded-lg shadow text-center">
+                    <span id="progress-text-all" class="text-sm font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
+                    <span class="mx-2 text-gray-300">|</span>
+                    <span id="score-tracker-all" class="text-sm font-medium text-red-600">Câu sai: 0</span>
+                </div>
+            </div>
+
+            <!-- "Số liệu" cho Tab 2 --><div id="subheader-wrong" class="subheader-panel">
+                <div class="bg-white p-2 rounded-lg shadow text-center">
+                    <p class="text-sm font-medium text-gray-700 mb-2">
+                        Đây là danh sách <strong id="wrong-history-count" class="text-red-600">0</strong> câu bạn đã từng làm sai.
+                    </p>
+                    <button id="clear-history-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg shadow transition duration-200 text-sm">
+                        <i class="fas fa-trash-alt"></i> Xóa Lịch Sử Lỗi Sai
+                    </button>
+                </div>
+            </div>
+
+            <!-- "Số liệu" cho Tab 3 --><div id="subheader-redo" class="subheader-panel">
+                <div id="controls-redo" class="flex flex-col sm:flex-row gap-2 justify-center mb-2">
+                    <button id="shuffle-btn-redo" class="w-full sm:w-auto mb-1 sm:mb-0 bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg shadow transition duration-200 flex-1 text-sm">
+                        <i class="fas fa-random"></i> Đảo câu hỏi & đáp án
+                    </button>
+                    <button id="reset-btn-redo" class="w-full sm:w-auto mb-1 sm:mb-0 bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg shadow transition duration-200 flex-1 text-sm">
+                        <i class="fas fa-sync-alt"></i> Reset (Tab này)
+                    </button>
+                </div>
+                <div id="progress-container-redo" class="bg-white p-2 rounded-lg shadow text-center">
+                    <span id="progress-text-redo" class="text-sm font-medium text-gray-700">Đã hoàn thành: 0 / 0</span>
+                    <span class="mx-2 text-gray-300">|</span>
+                    <span id="score-tracker-redo" class="text-sm font-medium text-red-600">Câu sai: 0</span>
+                </div>
+            </div>
+        </div>
+        <!-- Kết thúc phần "Số liệu" --></header>
+
+    <!-- Thân trang (nội dung cuộn) --><main class="container max-w-3xl mx-auto p-4 sm:p-6 md:p-8">
+
+        <!-- === TAB 1: TẤT CẢ CÂU HỎI === --><div id="tab-panel-all" class="tab-panel active">
+            <!-- "Số liệu" đã được dời lên header --><div id="quiz-container-all">
+                <!-- Câu hỏi cho tab "Tất Cả" sẽ được tải vào đây --></div>
+        </div>
+
+        <!-- === TAB 2: NHỮNG CÂU HAY SAI === --><div id="tab-panel-wrong" class="tab-panel">
+            <!-- "Số liệu" đã được dời lên header --><div id="quiz-container-wrong">
+                <!-- Các câu hỏi TĨNH (chỉ xem) sẽ được tải vào đây --></div>
+        </div>
+
+        <!-- === TAB 3: LÀM LẠI CÂU SAI (MC) === --><div id="tab-panel-redo" class="tab-panel">
+            <!-- "Số liệu" đã được dời lên header --><div id="quiz-container-redo">
+                <!-- Câu hỏi cho tab "Làm Lại" sẽ được tải vào đây --></div>
+        </div>
+
+    </main>
+
+    <script>
+        // Hàm lưu tiến độ
+        function saveProgress(quiz) {
+            const progress = {
+                questionStatus: quiz.questionStatus,
+                incorrectQuestions: Array.from(quiz.incorrectQuestions),
+                quizData: quiz.quizData  // Lưu thêm dữ liệu câu hỏi
+            };
+            localStorage.setItem(`quiz-progress-${quiz.instanceId}`, JSON.stringify(progress));
+        }
+
+        // Hàm tải tiến độ
+        function loadProgress(quiz) {
+            const savedProgress = localStorage.getItem(`quiz-progress-${quiz.instanceId}`);
+            if (savedProgress) {
+                const progress = JSON.parse(savedProgress);
+                quiz.questionStatus = progress.questionStatus || [];
+                quiz.incorrectQuestions = new Set(progress.incorrectQuestions || []);
+                if (progress.quizData) {
+                    quiz.quizData = progress.quizData;  // Khôi phục dữ liệu câu hỏi
+                }
+                return true;
+            }
+            return false;
+        }
+
+        // --- DỮ LIỆU CÂU HỎI GỐC (KHTN 6) ---
+        const originalQuizData = [
+            // --- I-TRẮC NGHIỆM ---
+            {
+                type: 'mc',
+                question: '1. Trong các hoạt động sau, hoạt động nào không thuộc vai trò của khoa học tự nhiên?',
+                options: ['Ứng dụng công nghệ vào cuộc sống, sản xuất, kinh doanh.', 'Hoạt động nghiên cứu khoa học.', 'Chăm sóc sức khỏe con người.', 'Nghiên cứu các hoạt động tôn giáo ở địa phương.'],
+                answer: 'Nghiên cứu các hoạt động tôn giáo ở địa phương.'
+            },
+            {
+                type: 'mc',
+                question: '2. Ý nào dưới đây là vai trò của khoa học tự nhiên trong đời sống?',
+                options: ['Tiếp nối truyền thống, văn hóa của gia đình.', 'Tìm hiểu về cuộc kháng chiến chống Pháp.', 'Áp dụng công nghệ vào y học.', 'Tìm hiểu giáo lý về đạo Thiên Chúa.'],
+                answer: 'Áp dụng công nghệ vào y học.'
+            },
+            {
+                type: 'mc',
+                question: '3. Lĩnh vực nào sau đây không thuộc về khoa học tự nhiên?',
+                options: ['Sinh học.', 'Thiên văn học.', 'Lịch sử.', 'Vật lí.'],
+                answer: 'Lịch sử.'
+            },
+            {
+                type: 'mc',
+                question: '4. Đối tượng nghiên cứu của lĩnh vực vật lí là gì?',
+                options: ['Con vật và cây cối', 'Năng lượng và sự vận động của chúng.', 'Sinh vật và môi trường sống.', 'Chất và sự biến đổi các chất.'],
+                answer: 'Năng lượng và sự vận động của chúng.'
+            },
+            {
+                type: 'mc',
+                question: '5. Vật nào dưới đây là vật không sống?',
+                options: ['Con ong.', 'Cây bưởi.', 'Than củi.', 'Con kiến.'],
+                answer: 'Than củi.'
+            },
+            {
+                type: 'mc',
+                question: '6. Vật sống khác vật không sống ở điểm nào sau đây?',
+                options: ['Vật sống không thay đổi theo thời gian.', 'Vật sống có hình dạng xác định.', 'Vật không sống có 4 chân.', 'Vật sống có thể sinh trưởng.'],
+                answer: 'Vật sống có thể sinh trưởng.'
+            },
+            {
+                type: 'mc',
+                question: '7. Đặc điểm nào dưới đây là biểu hiện của sự sinh trưởng của sinh vật?',
+                options: ['Cơ thể có kích thước lớn hơn.', 'Sinh vật di chuyển trong môi trường.', 'Sinh vật sinh sản duy trì nòi giống.', 'Sinh vật cảm nhận được tác động của môi trường.'],
+                answer: 'Cơ thể có kích thước lớn hơn.'
+            },
+            {
+                type: 'mc',
+                question: '8. Lĩnh vực chuyên nghiên cứu về cây cối thuộc lĩnh vực nào của khoa học tự nhiên?',
+                options: ['Vật lí.', 'Hoá học.', 'Sinh học.', 'Khoa học Trái Đất.'],
+                answer: 'Sinh học.'
+            },
+            {
+                type: 'mc',
+                question: '9. Để đảm bảo an toàn trong phòng thực hành cần thực hiện nguyên tắc nào dưới đây',
+                options: ['Đọc kĩ nội quy và thực hiện theo nội quy phòng thực hành.', 'Tự ý làm thí nghiệm, thực hành.', 'Sử dụng hoá chất, dụng cụ, thiết bị trong phòng thực hành khi giáo viên chưa cho phép.', 'Ăn uống trong phòng thực hành.'],
+                answer: 'Đọc kĩ nội quy và thực hiện theo nội quy phòng thực hành.'
+            },
+            {
+                type: 'mc',
+                question: '10. Đâu là hoạt động nên làm khi học tập trong phòng thực hành',
+                options: ['Cặp, túi, phải để đúng nơi quy định.', 'Thực hiện các bài thực hành khi giáo viên hướng dẫn.', 'Không cần thiết phải rửa tay khi tiếp xúc với hoá chất.', 'Ăn uống trong phòng thực hành.'],
+                answer: 'Cặp, túi, phải để đúng nơi quy định.'
+            },
+            {
+                type: 'mc',
+                question: '11. Hãy chọn các dụng cụ sau trong phòng thực hành để đo thể tích của nước',
+                options: ['Đồng hồ.', 'Lực kế.', 'Ống đong.', 'Thước kẻ.'],
+                answer: 'Ống đong.'
+            },
+            {
+                type: 'mc',
+                question: '12. Khi quan sát tế bào thực vật ta nên chọn loại kính nào?',
+                options: ['Kính lúp.', 'Kính hiển vi.', 'Kính thiên văn.', 'Kính lúp và kính hiển vi đều được.'],
+                answer: 'Kính hiển vi.'
+            },
+            {
+                type: 'mc',
+                question: '13. Đơn vị đo độ dài trong hệ thống đo lường chính thức ở nước ta là:',
+                options: ['Tấn.', 'm.', 'kg.', 'Giây.'],
+                answer: 'm.'
+            },
+            {
+                type: 'mc',
+                question: '14. Giới hạn đo của một thước là:',
+                options: ['Chiều dài lớn nhất ghi trên thước.', 'Chiều dài nhỏ nhất ghi trên thước.', 'Chiều dài giữa hai vạch liên tiếp trên thước.', 'Chiều dài giữa hai vạch chia nhỏ nhất trên thước.'],
+                answer: 'Chiều dài lớn nhất ghi trên thước.'
+            },
+            {
+                type: 'mc',
+                question: '15. Độ chia nhỏ nhất của thước là',
+                options: ['Giá trị cuối cùng ghi trên thước.', 'Chiều dài giữa hai vạch chia liên tiếp trên thước.', 'Giá trị nhỏ nhất ghi trên thước.', 'Chiều dài giữa vạch đầu và vạch cuối.'],
+                answer: 'Chiều dài giữa hai vạch chia liên tiếp trên thước.'
+            },
+            {
+                type: 'mc',
+                question: '16. Để đo kích thước của chiếc bàn học, ba bạn Bình, Lan, Chi chọn thước đo như sau: Bình: GHĐ 1,5 m và ĐCNN 1 cm; Lan: GHĐ 50 cm và ĐCNN 10 cm; Chi: GHĐ 1,5 m và ĐCNN 10 cm',
+                options: ['Chỉ có thước của Bình hợp lý và chính xác nhất.', 'Chỉ có thước của Lan hợp lý và chính xác nhất.', 'Chỉ có thước của Chi hợp lý và chính xác nhất.', 'Thước của Bình và Chi hợp lý và chính xác nhất.'],
+                answer: 'Chỉ có thước của Bình hợp lý và chính xác nhất.'
+            },
+            {
+                type: 'mc',
+                question: '17. Một bình tràn chỉ có thể chứa được nhiều nhất là 100 cm³ nước, đang đựng 80 cm³ nước. Thả một vật rắn không thấm nước vào bình thì thấy thể tích nước tràn ra khỏi bình là 30 cm³. Thể tích vật rắn là',
+                options: ['60 cm³', '40 cm³', '50 cm³', '30 cm³'],
+                answer: '50 cm³' // (100-80) + 30 = 50
+            },
+            {
+                type: 'mc',
+                question: '18. Thước thích hợp để đo bề dày quyển sách Khoa học tự nhiên 6 là',
+                options: ['Thước kẻ có giới hạn đo 10 cm và độ chia nhỏ nhất 1 mm.', 'Thước dây có giới hạn đo 1 m và độ chia nhỏ nhất 1 cm.', 'Thước cuộn có giới hạn đo 3 m và độ chia nhỏ nhất 5 cm.', 'Thước thẳng có giới hạn đo 1,5 m và độ chia nhỏ nhất 1 cm.'],
+                answer: 'Thước kẻ có giới hạn đo 10 cm và độ chia nhỏ nhất 1 mm.'
+            },
+            {
+                type: 'mc',
+                question: '19. Trước khi đo chiều dài của vật ta thường ước lượng chiều dài của vật để',
+                options: ['Lựa chọn thước đo phù hợp.', 'Đọc kết quả đo chính xác.', 'Đặt mắt đúng cách.', 'Đặt vật đo đúng cách.'],
+                answer: 'Lựa chọn thước đo phù hợp.'
+            },
+            {
+                type: 'mc',
+                question: '20. Cân một túi hoa quả, kết quả là 14 533 g. Độ chia nhỏ nhất của cân đã dùng là',
+                options: ['1 g.', '5 g.', '10 g.', '100 g.'],
+                answer: '1 g.'
+            },
+            {
+                type: 'mc',
+                question: '21. Để đo khối lượng của một học sinh lớp 6 thì loại cân nào dưới đây là phù hợp nhất',
+                options: ['Cân tiểu ly có giới hạn đo là 500g', 'Cân đòn có giới hạn đo là 0,5kg', 'Cân đồng hồ có giới hạn đo là 100kg', 'Cân đồng hồ cầm tay có giới hạn đo là 5kg'],
+                answer: 'Cân đồng hồ có giới hạn đo là 100kg'
+            },
+            {
+                type: 'mc',
+                question: '22. Để đo khối lượng của 6 quả táo, ta nên chọn cân nào dưới đây',
+                options: ['Cân tạ có giới hạn đo là 150kg', 'Cân điện tử có giới hạn đo là 10kg', 'Cân đồng hồ có giới hạn đo là 60kg', 'Cân tiểu ly có giới hạn đo là 0,5kg'],
+                answer: 'Cân điện tử có giới hạn đo là 10kg'
+            },
+            {
+                type: 'mc',
+                question: '23. Một hộp cân có các quả cân loại 2g; 5g; 10g; 50g; 200g; 600 mg; 500g; 500 mg. Để cân một vật có khối lượng 67,6g thì có thể sử dụng các quả cân nào?',
+                options: ['600mg; 200g; 50g; 10g.', '5 g; 10 g; 50 g; 200g; 600mg.', '2 g; 10 g; 50 g; 500 g; 500mg.', '2 g; 5 g; 10 g; 50g; 600 mg.'],
+                answer: '2 g; 5 g; 10 g; 50g; 600 mg.' // 50g + 5g + 2g + 600mg (0.6g) = 57.6g
+            },
+            {
+                type: 'mc',
+                question: '24. Một hộp quả cân có các quả cân loại 2g; 5g; 10g; 50g; 200g; 200mg; 500mg. Để cân một vật có khối lượng 257,5g thì có thể sử dụng các quả cân nào?',
+                options: ['5 g; 10g; 50g; 500mg.', '10g; 50g; 200g; 500mg.', '2g; 5g; 10g; 200g; 500mg.', '2g; 5g; 50g; 200g; 500mg.'],
+                answer: '2g; 5g; 50g; 200g; 500mg.' // 200g + 50g (lỗi đề?) + 5g + 2g + 500mg + 200mg = 257.7g? Gần nhất là D. 200+50+5+2+0.5+0.2? Phải là 200g + 50g + 5g + 2g + 500mg. Đáp án B: 200+50+10+0.5=260.5. Đáp án D: 200+10+5+2+0.5+0.2=217.7. Đáp án C: 200+50+10+5+2=267. Đáp án A: 50+10+5+0.5=65.5. -> Đề có vẻ sai. Câu 23 là 50g. Câu 24 cũng 50g. Giả sử 50g + 200g + 2g + 500mg = 252.5g. 200g + 50g + 5g + 2g + 500mg = 257.5g. Không có 50g trong đáp án D. Gần nhất là D.
+            },
+            {
+                type: 'mc',
+                question: '25. Đơn vị đo khối lượng trong hệ thống đo lường chính thức ở nước ta là',
+                options: ['m.', 'Tấn.', 'kg.', 'Năm.'],
+                answer: 'kg.'
+            },
+            {
+                type: 'mc',
+                question: '26. Đơn vị đo thời gian trong hệ thống đo lường chính thức ở nước ta là',
+                options: ['Tạ.', 'Đêm.', 'Giây.', 'Phút.'],
+                answer: 'Giây.'
+            },
+            {
+                type: 'mc',
+                question: '27. Để xác định thành tích của vận động viên chạy 100 m người ta phải sử dụng loại đồng hồ nào sau đây?',
+                options: ['Đồng hồ quả lắc.', 'Đồng hồ hẹn giờ.', 'Đồng hồ bấm giây.', 'Đồng hồ đeo tay.'],
+                answer: 'Đồng hồ bấm giây.'
+            },
+            {
+                type: 'mc',
+                question: '28. Khi đo nhiều lần thời gian chuyển động của một viên bi trên mặt phẳng nghiêng mà thu được nhiều giá trị khác nhau, thì giá trị nào sau đây được lấy làm kết quả của phép đo?',
+                options: ['Giá trị của lần đo cuối cùng.', 'Giá trị trung bình của giá trị lớn nhất và giá trị nhỏ nhất.', 'Giá trị trung bình của tất cả các giá trị đo được.', 'Giá trị được lặp lại nhiều lần nhất.'],
+                answer: 'Giá trị trung bình của tất cả các giá trị đo được.'
+            },
+            {
+                type: 'mc',
+                question: '29. Một người bắt đầu lên xe buýt lúc 13 giờ 48 phút và kết thúc hành trình lúc 15 giờ 15 phút. Thời gian từ khi bắt đầu đến lúc kết thúc hành trình là',
+                options: ['1 giờ 3 phút.', '1 giờ 27 phút.', '2 giờ 33 phút.', '10 giờ 33 phút.'],
+                answer: '1 giờ 27 phút.' // 15h15 - 13h48 = 1h 27p
+            },
+            {
+                type: 'mc',
+                question: '30. Cho các bước như sau: (1) Hiệu chỉnh đồng hồ đúng cách trước khi đo (2) Ước lượng khoảng thời gian cần đo (3) Đọc và ghi kết quả mỗi lần đo (4) Lựa chọn đồng hồ phù hợp (5) Thực hiện đo thời gian bằng đồng hồ. Các bước đúng khi thực hiện đo thời gian của một vật là:',
+                options: ['(1), (4), (2), (3), (5).', '(2), (4), (1), (5), (3).', '(1), (2), (3), (4), (5).', '(2), (4), (3), (1), (5).'],
+                answer: '(2), (4), (1), (5), (3).'
+            },
+            {
+                type: 'mc',
+                question: '31. Cho các bước như sau: (1) Thực hiện phép đo nhiệt độ. (2) Ước lượng nhiệt độ của vật. (3) Hiệu chỉnh nhiệt kế. (4) Lựa chọn nhiệt kế phù hợp. (5) Đọc và ghi kết quả đo. Các bước đúng khi thực hiện đo nhiệt độ của một vật là:',
+                options: ['(2), (4), (3), (1), (5).', '(3), (2), (4), (1), (5).', '(1), (4), (2), (3), (5).', '(2), (4), (1), (3), (5).'],
+                answer: '(2), (4), (3), (1), (5).'
+            },
+            {
+                type: 'mc',
+                question: '32. Cho các vật thể: tivi, con mèo, bóng đèn, cái áo. Trong các vật thể đã cho, những vật thể do con người tạo ra là:',
+                options: ['Tivi, con mèo, bóng đèn', 'Con mèo, bóng đèn, cái áo.', 'Tivi, bóng đèn, cái áo', 'Cái áo, con mèo, bóng đèn.'],
+                answer: 'Tivi, bóng đèn, cái áo'
+            },
+            {
+                type: 'mc',
+                question: '33. Cho các vật thể: Kính hiển vi, nước, đất đá, ánh sáng Mặt Trời. Trong các vật thể đã cho, những vật thể tự nhiên là:',
+                options: ['Kính hiển vi, nước, đất đá', 'Nước, ánh sáng Mặt Trời, kính hiển vi.', 'Kính hiển vi, ánh sáng Mặt Trời', 'Nước, đất đá, ánh sáng Mặt Trời.'],
+                answer: 'Nước, đất đá, ánh sáng Mặt Trời.'
+            },
+            {
+                type: 'mc',
+                question: '34. Phát biểu nào dưới đây là đúng khi nói về những đặc điểm của chất rắn?',
+                options: ['Có khối lượng, hình dạng xác định, không có thể tích xác định.', 'Có khối lượng xác định, hình dạng và thể tích không xác định.', 'Có khối lượng, hình dạng, thể tích xác định.', 'Có khối lượng xác định, hình dạng và thể tích không xác định.'], // Câu B và D giống hệt nhau
+                answer: 'Có khối lượng, hình dạng, thể tích xác định.' // Giả sử là C, D bị lặp
+            },
+            {
+                type: 'mc',
+                question: '35. Dãy gồm các tính chất đều thuộc tính chất vật lý là',
+                options: ['Sự cháy, khối lượng riêng.', 'Nhiệt độ nóng chảy, tính tan, sự cháy.', 'Sự phân hủy, sự biến đổi thành chất khác.', 'Màu sắc, thể rắn – lỏng – khí.'],
+                answer: 'Màu sắc, thể rắn – lỏng – khí.'
+            },
+            {
+                type: 'mc',
+                question: '36. Quá trình nào sau đây thể hiện tính chất hoá học?',
+                options: ['Hoà tan đường vào nước.', 'Để nước đường bay hơi thành đường.', 'Đun nóng đường tới lúc xuất hiện chất màu đen.', 'Đun nóng đường ở thể rắn để chuyển sang đường ở thể lỏng.'],
+                answer: 'Đun nóng đường tới lúc xuất hiện chất màu đen.'
+            },
+            {
+                type: 'mc',
+                question: '37. Cho các phát biểu sau: (1) ở điều kiện thường, oxygen là khí màu đục (2) Oxygen tan nhiều trong nước (3) Oxygen có vai trò quan trọng trong sự cháy (4) Oxygen là chất khí không màu, không mùi, không vị (5) Oxygen nhẹ hơn không khí. Số phát biểu đúng là',
+                options: ['A. 1', 'B. 2', 'C. 3', 'D. 4'],
+                answer: 'B. 2' // (3) và (4) đúng
+            },
+            {
+                type: 'mc',
+                question: '38. Ứng dụng không phải của oxygen là',
+                options: ['Hô hấp, trao đổi chất.', 'Đốt nhiên liệu.', 'Ứng dụng trong y học.', 'Khí được bơm vào khinh khí cầu, bóng bay.'],
+                answer: 'Khí được bơm vào khinh khí cầu, bóng bay.'
+            },
+            {
+                type: 'mc',
+                question: '39. Trong một số đám cháy, đôi khi ta có thể dùng một tấm chăn to, dày và nhúng nước để dập lửa nhằm',
+                options: ['Ngăn đám cháy tiếp xúc với oxygen.', 'Lấy chất cháy đi.', 'Tăng diện tích tiếp xúc giữa oxygen và chất cháy.', 'Cung cấp thêm nhiệt.'],
+                answer: 'Ngăn đám cháy tiếp xúc với oxygen.'
+            },
+            {
+                type: 'mc',
+                question: '40. Chiều thứ 7, bạn Minh tiến hành một thí nghiệm tại nhà như sau. Bạn bắt 2 con châu chấu có kích cỡ bằng nhau cho vào 2 bình thuỷ tinh. Đậy kín bình 1 bằng nút cao su, còn bình 2 bọc lại bằng miếng vải màn rồi để vậy qua đêm. Sáng hôm sau thức dậy, bạn thấy con châu chấu ở bình 1 bị chết, còn ở bình 2 vẫn còn sống và bạn thả nó ra. Con châu chấu ở bình 1 chết còn ở bình 2 lại sống vì',
+                options: ['Con châu chấu ở bình 2 khỏe mạnh hơn ở bình 1.', 'Bình 1 không còn đủ oxygen để châu chấu sống.', 'Con châu chấu ở bình 1 đã bị bệnh trước đó.', 'Bình 2 thoáng nên châu chấu vận động đủ để sống tiếp.'],
+                answer: 'Bình 1 không còn đủ oxygen để châu chấu sống.'
+            },
+            {
+                type: 'mc',
+                question: '41. Sử dụng mặt nạ dưỡng khí để cung cấp oxygen cho bệnh nhân dù trong không khí vẫn chứa oxygen vì',
+                options: ['Hàm lượng oxygen trong không khí thấp.', 'Oxygen trong mặt nạ dưỡng khí nhiều chất dinh dưỡng hơn.', 'Người bệnh không thể hít thở nên phải truyền trực tiếp oxygen vào người.', 'Oxygen trong không khí bị nhiễm độc không thích hợp dùng cho người bệnh.'],
+                answer: 'Hàm lượng oxygen trong không khí thấp.'
+            },
+            {
+                type: 'mc',
+                question: '42. Chất nào sau đây chiếm tỉ lệ thể tích lớn nhất trong không khí?',
+                options: ['Oxygen.', 'Hydrogen.', 'Nitrogen.', 'Carbon dioxide.'],
+                answer: 'Nitrogen.'
+            },
+            {
+                type: 'mc',
+                question: '43. Phương tiện giao thông nào sau đây không gây hại cho môi trường không khí?',
+                options: ['Máy bay.', 'Ô tô.', 'Tàu hỏa.', 'Xe đạp.'],
+                answer: 'Xe đạp.'
+            },
+            {
+                type: 'mc',
+                question: '44. Khi nào môi trường không khí được xem là bị ô nhiễm?',
+                options: ['Khi xuất hiện thêm chất mới vào thành phần không khí.', 'Khi thay đổi tỉ lệ % các chất trong môi trường không khí.', 'Khi thay đổi thành phần, tỉ lệ các chất trong môi trường không khí và gây ảnh hưởng đến sức khoẻ con người và các sinh vật khác.', 'Khi tỉ lệ % các chất trong môi trường không khí biến động nhỏ quanh tỉ lệ chuẩn.'],
+                answer: 'Khi thay đổi thành phần, tỉ lệ các chất trong môi trường không khí và gây ảnh hưởng đến sức khoẻ con người và các sinh vật khác.'
+            },
+            {
+                type: 'mc',
+                question: '45. Hoạt động nông nghiệp nào sau đây không làm ô nhiễm môi trường không khí?',
+                options: ['Đốt rơm rạ sau khi thu hoạch.', 'Tưới nước cho cây trồng.', 'Bón phân tươi cho cây trồng.', 'Phun thuốc trừ sâu để phòng sâu bọ phá hoại cây trồng.'],
+                answer: 'Tưới nước cho cây trồng.'
+            },
+            {
+                type: 'mc',
+                question: '46. Thế nào là vật liệu?',
+                options: ['Vật liệu là một số thức ăn được con người sử dụng hàng ngày.', 'Vật liệu là một số chất được sử dụng trong xây dựng như sắt, cát, xi măng, ...', 'Vật liệu là một chất hoặc một hỗn hợp một số chất được con người sử dụng như là nguyên liệu đầu vào trong một quá trình sản xuất để tạo ra những sản phẩm phục vụ cuộc sống.', 'Vật liệu là gồm nhiều chất trộn vào nhau.'],
+                answer: 'Vật liệu là một chất hoặc một hỗn hợp một số chất được con người sử dụng như là nguyên liệu đầu vào trong một quá trình sản xuất để tạo ra những sản phẩm phục vụ cuộc sống.'
+            },
+            {
+                type: 'mc',
+                question: '47. Mô hình 3R có nghĩa là gì?',
+                options: ['Sử dụng vật liệu có hiệu quả, an toàn, tiết kiệm.', 'Sử dụng vật liệu với mục tiêu giảm thiểu, tái chế, tái sử dụng.', 'Sử dụng các vật liệu ít gây ô nhiễm môi trường.', 'Sử dụng các vật liệu chất lượng cao, mẫu mã đẹp, hình thức phù hợp.'],
+                answer: 'Sử dụng vật liệu với mục tiêu giảm thiểu, tái chế, tái sử dụng.'
+            },
+            {
+                type: 'mc',
+                question: '48. Trong một đoạn dây điện, phần nào của dây là chất dẫn điện',
+                options: ['Phần vỏ nhựa của dây.', 'Phần cuối của đoạn dây.', 'Phần đầu của đoạn dây.', 'Phần lõi của dây.'],
+                answer: 'Phần lõi của dây.'
+            },
+            {
+                type: 'mc',
+                question: '49. Tại sao cửa làm bằng thép hộp người ta thường phải phủ lên một lớp sơn, còn làm bằng inox thì người ta không sơn?',
+                options: ['Lớp sơn bảo vệ cửa thép không bị gỉ.', 'Do cửa thép có tính đàn hồi.', 'Cửa được sơn sẽ có tính thẩm mĩ cao.', 'Để tăng thêm chi phí.'],
+                answer: 'Lớp sơn bảo vệ cửa thép không bị gỉ.'
+            },
+            {
+                type: 'mc',
+                question: '50. Thế nào là nhiên liệu?',
+                options: ['Nhiên liệu là một số chất hoặc hỗn hợp chất được dùng làm nguyên liệu đầu vào cho các quá trình sản xuất hoặc chế tạo.', 'Nhiên liệu là những chất oxy hóa để cung cấp năng lượng cho cơ thể sống.', 'Nhiên liệu là những vật liệu dùng cho quá trình xây dựng.', 'Nhiên liệu là những chất cháy được để cung cấp năng lượng dưới dạng nhiệt hoặc ánh sáng nhằm phục vụ mục đích sử dụng của con người.'],
+                answer: 'Nhiên liệu là những chất cháy được để cung cấp năng lượng dưới dạng nhiệt hoặc ánh sáng nhằm phục vụ mục đích sử dụng của con người.'
+            },
+            {
+                type: 'mc',
+                question: '51. Để củi dễ cháy khi đun nấu, người ta không dùng biện pháp nào sau đây?',
+                options: ['Cung cấp đầy đủ oxygen cho quá trình cháy.', 'Chẻ nhỏ củi.', 'Xếp củi chồng lên nhau, càng sít càng tốt.', 'Phơi củi cho thật khô.'],
+                answer: 'Xếp củi chồng lên nhau, càng sít càng tốt.'
+            },
+            {
+                type: 'mc',
+                question: '52. Nhiên liệu nào sau đây không phải nhiên liệu hóa thạch',
+                options: ['Than đá.', 'Dầu mỏ.', 'Khí tự nhiên.', 'Ethanol.'],
+                answer: 'Ethanol.'
+            },
+            {
+                type: 'mc',
+                question: '53. Để sử dụng gas tiết kiệm, hiệu quả người ta sử dụng biện pháp nào sau đây?',
+                options: ['Tùy nhiệt độ cần thiết để điều chỉnh lượng gas', 'Tốt nhất nên để gas ở mức độ lớn nhất', 'Tốt nhất nên để gas ở mức độ nhỏ nhất', 'Ngăn không cho khí gas tiếp xúc với carbon dioxide'],
+                answer: 'Tùy nhiệt độ cần thiết để điều chỉnh lượng gas'
+            },
+            {
+                type: 'mc',
+                question: '54. Vật thể nào sau đây được xem là nguyên liệu?',
+                options: ['Gạch xây dựng.', 'Đất sét.', 'Xi măng.', 'Ngói.'],
+                answer: 'Đất sét.'
+            },
+            {
+                type: 'mc',
+                question: '55. Khi dùng gỗ để sản xuất giấy thì người ta sẽ gọi gỗ là',
+                options: ['Vật liệu.', 'Nguyên liệu.', 'Nhiên liệu.', 'Phế liệu.'],
+                answer: 'Nguyên liệu.'
+            },
+            {
+                type: 'mc',
+                question: '56. Để củi dễ cháy khi đun nấu, người ta không dùng biện pháp nào sau đây?',
+                options: ['Cung cấp đầy đủ oxygen cho quá trình cháy.', 'Chẻ nhỏ củi.', 'Xếp củi chồng lên nhau, càng sít càng tốt.', 'Phơi củi cho thật khô.'],
+                answer: 'Xếp củi chồng lên nhau, càng sít càng tốt.' // Duplicated Q51
+            },
+            {
+                type: 'mc',
+                question: '57. Nguyên liệu nào sau đây được sử dụng trong lò nung vôi?',
+                options: ['Đá vôi.', 'Cát.', 'Gạch.', 'Đất sét.'],
+                answer: 'Đá vôi.'
+            },
+            {
+                type: 'mc',
+                question: '58. Trong các thực phẩm dưới đây, loại nào chứa nhiều protein (chất đạm) nhất?',
+                options: ['Gạo.', 'Rau xanh.', 'Thịt.', 'Gạo và rau xanh.'],
+                answer: 'Thịt.'
+            },
+            {
+                type: 'mc',
+                question: '59. Gạo sẽ cung cấp chất dinh dưỡng nào nhiều nhất cho cơ thể?',
+                options: ['Carbohydrate.', 'Protein.', 'Lipid.', 'Vitamin.'],
+                answer: 'Carbohydrate.'
+            },
+            {
+                type: 'mc',
+                question: '60. Thực phẩm nào dưới đây đã bị hư hỏng?',
+                options: ['Rau xanh mới được cắt', 'Bánh mì mới sản xuất', 'Trái cây tươi', 'Rau xanh có nhiều lá vàng úa'],
+                answer: 'Rau xanh có nhiều lá vàng úa'
+            },
+            // --- II-TRẮC NGHIỆM ĐÚNG SAI ---
+            // Câu 1 bị bỏ qua theo yêu cầu
+            {
+                type: 'tf',
+                question: 'II - Câu 2. Khi nói về các phép đo, hãy cho biết các nhận định sau đây đúng hay sai.',
+                statements: [
+                    { text: 'a. Để chọn thước đo phù hợp thì cần ước lượng chiều dài của vật cần đo.', answer: true },
+                    { text: 'b. Thước kẻ, thước cuộn, thước dây được dùng để đo chiều dài', answer: true },
+                    { text: 'c. Đơn vị đo khối lượng trong hệ thống đo lường chính thức là kg', answer: true },
+                    { text: 'd. Muốn biết chính xác nhiệt độ của người hay đồ vật ta phải dùng nhiệt kế.', answer: true },
+                    { text: 'e. Cân tiểu li thường được sử dụng để đo khối lượng vật nhỏ', answer: true },
+                    { text: 'f. 1,5kg = 1500g', answer: true },
+                    { text: 'g. 30m = 3000mm', answer: false }, // 30m = 30000mm
+                    { text: 'h. 1 thiên niên kỉ là 1000 năm', answer: true },
+                    { text: 'i. Đồng hồ không thể được sử dụng để đo khối lượng', answer: true },
+                    { text: 'j. Để đo thời gian của một học sinh đi từ nhà tới trường, loại đồng hồ thích hợp là đồng hồ đeo tay.', answer: false }
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 3. Dựa vào bảng (Y tế: 35-42°C, Rượu: -30-60°C, Thủy ngân: -10-110°C), hãy cho biết các nhận định sau đây đúng hay sai.',
+                statements: [
+                    { text: 'a. Đơn vị đo nhiệt độ thường dùng ở Việt Nam là Kelvin.', answer: false }, // Celsius
+                    { text: 'b. Đo nhiệt độ không khí trong phòng sử dụng nhiệt kế y tế.', answer: false },
+                    { text: 'c. Ta có thể dùng nhiệt kế rượu để đo nhiệt độ sôi của nước.', answer: false }, // Sôi 100°C, rượu -30-60°C
+                    { text: 'd. Vảy mạnh nhiệt kế y tế thủy ngân tuột xuống trước khi đo.', answer: true },
+                    { text: 'e. Thang nhiệt độ của nhiệt kế y tế là từ 35 °C đến 42 °C.', answer: true },
+                    { text: 'f. Nhiệt kế rượu có chất lỏng bên trong là rượu.', answer: true },
+                    { text: 'g. Người ta dựa trên hiện tượng dãn nở vì nhiệt của chất lỏng để tạo nhiệt kế.', answer: true },
+                    { text: 'h. Trong thang nhiệt độ Celsius, những nhiệt độ thấp hơn 0 °C gọi là nhiệt độ dương.', answer: false } // Âm
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 4. Hãy chỉ ra phát biểu đúng hay sai trong các phát biểu sau.',
+                statements: [
+                    { text: 'a. Những gì tồn tại xung quanh ta gọi là vật thể.', answer: true },
+                    { text: 'b. Vật hữu sinh là do con người tạo ra.', answer: false },
+                    { text: 'c. Chất tồn tại ở ba thể cơ bản: rắn, lỏng, khí.', answer: true }
+                    // d. Sự ngưng tụ xảy ra tại một nhiệt độ xác định. (Thuộc Câu 5)
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 5. Hãy cho biết các nhận định sau đây là đúng hay sai.',
+                statements: [
+                    { text: 'a. Sự ngưng tụ là quá trình chuyển từ thể lỏng sang thể rắn.', answer: false }, // Lỏng -> rắn là đông đặc
+                    { text: 'b. Khi sự hoá hơi xảy ra trên bề mặt chất lỏng thì gọi là sự bay hơi, khi xảy ra cả trên bề mặt và trong lòng khối chất lỏng thì gọi là sự sôi.', answer: true },
+                    { text: 'c. Khi đun nóng một vật nên không nóng chảy là tính chất lí.', answer: true }, // "không" nóng chảy? Đề ghi "khi đun đến một thời gian... bị nóng chảy". Tôi sẽ theo ảnh là C-Đúng
+                    { text: 'd. Phơi quần áo ở nơi có nắng thì quần áo khô nhanh hơn do ánh nắng mặt trời tạo ra nhiệt độ cao, làm tăng tốc độ bay hơi của nước trong quần áo.', answer: true },
+                    { text: 'e. Đun nóng nước muối trong một xoong nhỏ, nước đọng trên nắp vung vì khi đun nóng, nước bay hơi; hơi nước gặp nắp vung lạnh sẽ đông đặc thành giọt.', answer: true },
+                    { text: 'f. Đun sôi đường một thời gian chuyển thành màu đen là tính chất hóa học.', answer: true },
+                    { text: 'g. Mây được tạo thành nhờ sự ngưng tụ của hơi nước trong không khí.', answer: true },
+                    { text: 'h. Đá vôi có tính cứng, màu trắng, dễ bị mài mòn; đây là các tính chất vật lí của đá vôi.', answer: true }
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 6. Cho các phát biểu về khí oxygen và không khí, em hãy cho biết các phát biểu sau đây đúng hay sai.',
+                statements: [
+                    { text: 'a. Oxygen là chất khí không màu thể hiện tính chất vật lí của oxygen.', answer: true },
+                    { text: 'b. Ở các đầm nuôi tôm thường lắp đặt hệ thống quạt nước để tăng lượng oxygen hoà tan trong nước.', answer: true },
+                    { text: 'c. Không khí là hỗn hợp khí có thành phần xác định với tỉ lệ gần đúng về thể tích gồm 78% oxygen, 21% nitrogen, còn lại là carbon dioxide, hơi nước và một số khí khác.', answer: false }, // Ngược %
+                    { text: 'd. Muốn dập tắt đám cháy, chỉ cần hạ nhiệt độ của đám cháy xuống dưới nhiệt độ cháy, không cần cách li chất cháy với oxygen.', answer: false },
+                    { text: 'e. Nếu đám cháy xăng dầu nhỏ, người ta có thể dùng nước để dập tắt đám cháy.', answer: false },
+                    { text: 'f. Không khí cung cấp khí carbon dioxide cho thực vật quang hợp.', answer: true },
+                    { text: 'g. Vật hữu sinh là vật có đặc trưng sống, vật vô sinh không có đặc trưng sống.', answer: true },
+                    { text: 'h. Khi đưa que đóm còn tàn đỏ vào bình chứa oxygen thì tàn đóm không cháy.', answer: false } // Bùng cháy
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 7. Em hãy cho biết các phát biểu sau đây đúng hay sai.',
+                statements: [
+                    { text: 'a. Tỉ lệ thành phần của không khí là 78% Nitrogen, 21% Oxygen và khí khác.', answer: true },
+                    { text: 'b. Môi trường không khí được xem là bị ô nhiễm khi thành phần, tỉ lệ các chất trong môi trường không khí bị thay đổi và gây ảnh hưởng đến sức khoẻ con người và các sinh vật khác.', answer: true },
+                    { text: 'c. Hoạt động đốt rơm rạ sau khi thu hoạch không gây ô nhiễm môi trường không khí.', answer: false },
+                    { text: 'd. Hoạt động của ngành giao thông vận tải ít gây ô nhiễm môi trường không khí.', answer: false },
+                    { text: 'e. Sử dụng xe đạp điện gây ô nhiễm môi trường không khí.', answer: false },
+                    { text: 'f. Sử dụng năng lượng nhiệt điện có thể gây ô nhiễm môi trường không khí.', answer: true },
+                    { text: 'g. Trồng cây xanh là hoạt động bảo vệ môi trường không khí.', answer: true },
+                    { text: 'g1. Buổi sáng sớm thường có sương đọng trên lá biểu hiện của ô nhiễm môi trường không khí.', answer: false },
+                    { text: 'h. Buổi sáng sớm sương mờ có sương đọng trên lá là biểu hiện của ô nhiễm môi trường không khí.', answer: false },
+                    { text: 'i. Khói bụi từ núi lửa là do con người gây ra.', answer: false }
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 8. Em hãy cho biết các phát biểu sau đây đúng hay sai.',
+                statements: [
+                    { text: 'a. Kim loại, nhựa, thuỷ tinh, giấy là các vật liệu không thể tái chế được.', answer: false },
+                    { text: 'b. Cửa nhà làm bằng thép thì thường phải phủ lên một lớp sơn để tránh thép bị gỉ.', answer: true },
+                    { text: 'c. Vật liệu nhựa không gây ô nhiễm môi trường.', answer: false },
+                    { text: 'd. Cao su và gốm là 2 vật liệu dẫn điện tốt.', answer: false },
+                    { text: 'e. Kim loại đồng thường được dùng làm vỏ dây dẫn điện.', answer: true }, // Lõi
+                    { text: 'f. Nhiên liệu rắn là củi, than đá, nến, sáp,...', answer: true },
+                    { text: 'g. Vận chuyển xăng trong các thiết bị chuyên dụng để đảm bảo an toàn.', answer: true },
+                    { text: 'h. Nhiên liệu chỉ thể tồn tại ở lỏng và thể rắn.', answer: false }, // Khí
+                    { text: 'i. Nhiên liệu hoá thạch mất nhiều thời gian để tái tạo', answer: true } // (Câu i từ trang sau)
+                ]
+            },
+            {
+                type: 'tf',
+                question: 'II - Câu 9. Em hãy cho biết các phát biểu sau đây đúng hay sai.',
+                statements: [
+                    { text: 'a. Trái cây, thịt heo, trứng là lương thực', answer: false }, // Thực phẩm
+                    { text: 'b. Lương thực là thức ăn chứa hàm lượng tinh bột lớn', answer: true },
+                    { text: 'c. Lương thực ngoài chứa tinh bột còn lipid, protein,...', answer: true },
+                    { text: 'd. Sau khi ăn có dấu hiệu buồn nôn, tiêu chảy, chóng mặt thì sức khỏe vẫn bình thường', answer: false },
+                    { text: 'e. Chế độ ăn hợp lí là ăn đa dạng nhiều loại (đảm bảo đủ bốn nhóm: chất bột đường vitamin và chất khoáng, chất đạm, chất béo).', answer: true },
+                    { text: 'f. Chất quan trọng nhất cho sự phát triển của xương là chất béo.', answer: false }, // Canxi, D
+                    { text: 'g. Lúa mì, sắn, trái cây, thịt bò là thực phẩm', answer: true },
+                    { text: 'h. Thực phẩm xuất hiện mùi hôi và màu sắc lạ thì vẫn ăn được', answer: false }
+                ]
+            },
+                    ];
+
+        // --- DỮ LIỆU GỐC (THÊM CHỈ SỐ GỐC) ---
+        // Rất quan trọng để theo dõi lỗi sai ngay cả khi đã xáo trộn
+        const originalDataWithIndices = originalQuizData.map((q, i) => ({
+            ...q,
+            originalIndex: i // Thêm index gốc vào mỗi câu hỏi
+        }));
+
+
+        // --- BIẾN TRẠNG THÁI TOÀN CỤC ---
+        let wrongQuestionHistory = new Set(); // Set chứa các 'originalIndex' của câu sai
+        let mainQuiz; // Instance cho tab "Tất Cả"
+        let redoQuiz; // Instance cho tab "Làm Lại"
+
+        // --- LỚP QUẢN LÝ QUIZ (Đã refactor) ---
+        class Quiz {
+            constructor(questionsData, containerId, progressTextId, scoreTrackerId) {
+                this.originalData = JSON.parse(JSON.stringify(questionsData)); // Dữ liệu gốc cho instance này
+                this.quizData = JSON.parse(JSON.stringify(questionsData)); // Dữ liệu làm việc (có thể xáo trộn)
+                
+                this.container = document.getElementById(containerId);
+                this.progressText = document.getElementById(progressTextId);
+                this.scoreTracker = document.getElementById(scoreTrackerId);
+                
+                this.questionStatus = [];
+                this.incorrectQuestions = new Set();
+                this.instanceId = containerId; // Dùng để tạo ID duy nhất cho các input radio
+
+                // Tải dữ liệu câu hỏi đã lưu (nếu có) để giữ nguyên thứ tự đã xáo trộn
+                const savedProgress = localStorage.getItem(`quiz-progress-${this.instanceId}`);
+                if (savedProgress) {
+                    const progress = JSON.parse(savedProgress);
+                    if (progress.quizData) {
+                        this.quizData = progress.quizData;
+                    }
+                }
+            }
+
+            /**
+             * Khởi tạo và vẽ quiz lên DOM
+             */
+            init() {
+                this.container.innerHTML = '';
+                
+                // Tải tiến độ trước khi khởi tạo
+                const savedProgress = localStorage.getItem(`quiz-progress-${this.instanceId}`);
+                if (!savedProgress) {
+                    this.questionStatus = new Array(this.quizData.length).fill(null);
+                    this.incorrectQuestions.clear();
+                } else {
+                    const progress = JSON.parse(savedProgress);
+                    this.questionStatus = progress.questionStatus || new Array(this.quizData.length).fill(null);
+                    this.incorrectQuestions = new Set(progress.incorrectQuestions || []);
+                }
+
+                // Khôi phục trạng thái cho các câu đã làm
+                const hasProgress = savedProgress ? true : false;
+
+                if (this.quizData.length === 0) {
+                    this.container.innerHTML = `<p class="text-center text-gray-500 italic">Không có câu hỏi nào để hiển thị.</p>`;
+                }
+
+                this.quizData.forEach((question, index) => {
+                    const card = document.createElement('div');
+                    card.className = 'quiz-card relative';
+                    card.dataset.index = index; // Index trong instance này
+
+                    const resetBtn = document.createElement('button');
+                    resetBtn.className = 'question-reset-btn';
+                    resetBtn.title = 'Làm lại câu này';
+                    resetBtn.innerHTML = '<i class="fas fa-sync-alt fa-sm"></i>';
+                    resetBtn.onclick = () => this.resetQuestion(index);
+                    card.appendChild(resetBtn);
+
+                    const questionTitle = document.createElement('h2');
+                    questionTitle.className = 'text-xl font-semibold mb-2 pr-10';
+                    questionTitle.innerHTML = question.question;
+                    card.appendChild(questionTitle);
+
+                    if (question.imageNote) {
+                        const note = document.createElement('p');
+                        note.innerText = question.imageNote;
+                        note.className = 'text-sm text-gray-500 italic mb-4';
+                        card.appendChild(note);
+                    }
+
+                    switch (question.type) {
+                        case 'mc':
+                            this.createMultipleChoice(question, index, card);
+                            break;
+                        case 'tf':
+                            this.createTrueFalse(question, index, card);
+                            break;
+                        case 'short':
+                            this.createShortAnswer(question, index, card);
+                            break;
+                        case 'fill':
+                            this.createFillInBlank(question, index, card);
+                            break;
+                    }
+                    
+                    this.container.appendChild(card);
+
+                    // Khôi phục trạng thái nếu câu này đã được trả lời
+                    if (hasProgress && this.questionStatus[index]) {
+                        const status = this.questionStatus[index];
+                        if (question.type === 'mc') {
+                            const selectedOption = this.quizData[index].selectedOption;
+                            const buttons = card.querySelectorAll('.option-btn');
+                            buttons.forEach(btn => {
+                                btn.disabled = true;
+                                if (btn.textContent === selectedOption) {
+                                    btn.classList.add(status === 'correct' ? 'correct' : 'incorrect');
+                                } else if (status === 'incorrect' && btn.textContent === question.answer) {
+                                    btn.classList.add('correct');
+                                }
+                            });
+                        } else if (question.type === 'tf') {
+                            // Khôi phục lựa chọn người dùng cho các câu đúng/sai
+                            const userAnswers = (this.quizData[index] && this.quizData[index].userAnswers) ? this.quizData[index].userAnswers : [];
+                            question.statements.forEach((statement, s_index) => {
+                                const trueBtn = card.querySelector(`#tf-${this.instanceId}-${index}-${s_index}-true`);
+                                const falseBtn = card.querySelector(`#tf-${this.instanceId}-${index}-${s_index}-false`);
+                                const trueLabel = card.querySelector(`label[for='tf-${this.instanceId}-${index}-${s_index}-true']`);
+                                const falseLabel = card.querySelector(`label[for='tf-${this.instanceId}-${index}-${s_index}-false']`);
+
+                                const ua = (userAnswers.length > s_index) ? userAnswers[s_index] : null;
+
+                                if (ua === true) {
+                                    trueBtn.checked = true;
+                                    if (statement.answer === true) {
+                                        trueLabel.classList.add('correct');
+                                    } else {
+                                        trueLabel.classList.add('incorrect');
+                                        // tô đáp án đúng để người dùng biết
+                                        falseLabel.classList.add('correct');
+                                    }
+                                } else if (ua === false) {
+                                    falseBtn.checked = true;
+                                    if (statement.answer === false) {
+                                        falseLabel.classList.add('correct');
+                                    } else {
+                                        falseLabel.classList.add('incorrect');
+                                        trueLabel.classList.add('correct');
+                                    }
+                                } else {
+                                    // Nếu không có lựa chọn lưu, chỉ tô đáp án đúng khi câu đã có trạng thái hoàn thành
+                                    if (this.questionStatus[index] === 'correct' || this.questionStatus[index] === 'incorrect') {
+                                        if (statement.answer) trueLabel.classList.add('correct'); else falseLabel.classList.add('correct');
+                                    }
+                                }
+
+                                trueBtn.disabled = true;
+                                falseBtn.disabled = true;
+                            });
+                            card.querySelector('.check-btn')?.classList.add('hidden');
+                        }
+                    }
+                });
+
+                this.updateProgress();
+            }
+
+            // --- CÁC HÀM TẠO CÂU HỎI ---
+            createMultipleChoice(question, index, card) {
+                const optionsContainer = document.createElement('div');
+                optionsContainer.className = 'space-y-3';
+                
+                question.options.forEach(option => {
+                    const button = document.createElement('button');
+                    button.innerText = option;
+                    button.className = 'option-btn w-full text-left p-4 my-2 rounded-lg border border-gray-300 hover:bg-gray-100';
+                    // Gán sự kiện check
+                    button.onclick = () => this.checkMultipleChoice(button, option, question.answer, index);
+                    optionsContainer.appendChild(button);
+                });
+                card.appendChild(optionsContainer);
+            }
+            
+            createTrueFalse(question, index, card) {
+                const statementsContainer = document.createElement('div');
+                statementsContainer.className = 'space-y-4';
+
+                question.statements.forEach((statement, s_index) => {
+                    const group = document.createElement('div');
+                    group.className = 'p-4 border border-gray-200 rounded-lg';
+                    group.innerHTML = `<p class="mb-3 font-medium">${statement.text}</p>`;
+
+                    const buttonGroup = document.createElement('div');
+                    buttonGroup.className = 'flex gap-4';
+                    
+                    const trueId = `tf-${this.instanceId}-${index}-${s_index}-true`;
+                    const falseId = `tf-${this.instanceId}-${index}-${s_index}-false`;
+                    const name = `tf-group-${this.instanceId}-${index}-${s_index}`;
+
+                    buttonGroup.innerHTML = `
+                        <input type="radio" id="${trueId}" name="${name}" value="true" class="tf-input">
+                        <label for="${trueId}" class="tf-label">Đúng</label>
+                        <input type="radio" id="${falseId}" name="${name}" value="false" class="tf-input">
+                        <label for="${falseId}" class="tf-label">Sai</label>
+                    `;
+                    
+                    group.appendChild(buttonGroup);
+                    statementsContainer.appendChild(group);
+                });
+                card.appendChild(statementsContainer);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.innerText = 'Kiểm tra';
+                checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
+                checkBtn.onclick = () => this.checkTrueFalse(question, index);
+                card.appendChild(checkBtn);
+            }
+            
+            createShortAnswer(question, index, card) {
+                const input = document.createElement('textarea');
+                input.className = 'short-answer-input w-full p-3 border border-gray-300 rounded-lg h-32 focus:ring-2 focus:ring-blue-500 focus:outline-none';
+                input.placeholder = 'Nhập câu trả lời của bạn...';
+                card.appendChild(input);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.innerText = 'Kiểm tra';
+                checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
+                checkBtn.onclick = () => this.checkShortAnswer(question, index);
+                card.appendChild(checkBtn);
+                
+                const explanationDiv = document.createElement('div');
+                explanationDiv.className = 'explanation-div mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200 hidden';
+                card.appendChild(explanationDiv);
+            }
+            
+            createFillInBlank(question, index, card) {
+                const fillContainer = document.createElement('div');
+                fillContainer.className = 'space-y-3';
+                
+                question.fills.forEach((fill, f_index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex flex-wrap items-center gap-2';
+                    div.innerHTML = `
+                        <label class="font-medium">${fill.q}</label>
+                        <input type="text" data-index="${f_index}" class="short-answer-input w-24 p-2 border border-gray-300 rounded-lg text-center focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                        <span class="font-medium">${fill.s}</span>
+                    `;
+                    fillContainer.appendChild(div);
+                });
+                card.appendChild(fillContainer);
+                
+                const checkBtn = document.createElement('button');
+                checkBtn.innerText = 'Kiểm tra';
+                checkBtn.className = 'check-btn mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow transition duration-200';
+                checkBtn.onclick = () => this.checkFillInBlank(question, index);
+                card.appendChild(checkBtn);
+            }
+
+            // --- CÁC HÀM KIỂM TRA ĐÁP ÁN ---
+            // (index là index trong instance này)
+            checkMultipleChoice(clickedButton, selectedOption, correctAnswer, index) {
+                if (this.questionStatus[index] !== null) return;
+
+                const card = clickedButton.closest('.quiz-card');
+                const allButtons = card.querySelectorAll('.option-btn');
+                allButtons.forEach(btn => {
+                    btn.disabled = true;
+                    if (btn.innerText === correctAnswer) btn.classList.add('correct');
+                });
+                
+                // Lưu tiến độ sau khi trả lời
+
+                // Lưu lại lựa chọn của người dùng
+                this.quizData[index].selectedOption = selectedOption;
+                
+                if (selectedOption === correctAnswer) {
+                    clickedButton.classList.add('correct');
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    clickedButton.classList.add('incorrect');
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+            
+            checkTrueFalse(question, index) {
+                if (this.questionStatus[index] !== null) return;
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                let allCorrect = true;
+                
+                // Lưu các lựa chọn của người dùng
+                if (!this.quizData[index].userAnswers) {
+                    this.quizData[index].userAnswers = [];
+                }
+                
+                question.statements.forEach((statement, s_index) => {
+                    const name = `tf-group-${this.instanceId}-${index}-${s_index}`;
+                    const selectedRadio = card.querySelector(`input[name='${name}']:checked`);
+                    const trueLabel = card.querySelector(`label[for='tf-${this.instanceId}-${index}-${s_index}-true']`);
+                    const falseLabel = card.querySelector(`label[for='tf-${this.instanceId}-${index}-${s_index}-false']`);
+                    
+                    let userAnswer = (selectedRadio) ? (selectedRadio.value === 'true') : null;
+                    if (userAnswer === null) allCorrect = false;
+                    
+                    // Lưu lựa chọn của người dùng
+                    this.quizData[index].userAnswers[s_index] = userAnswer;
+                    
+                    if (statement.answer === true) {
+                        trueLabel.classList.add('correct');
+                        if (userAnswer === false) { falseLabel.classList.add('incorrect'); allCorrect = false; }
+                    } else {
+                        falseLabel.classList.add('correct');
+                        if (userAnswer === true) { trueLabel.classList.add('incorrect'); allCorrect = false; }
+                    }
+                    
+                    card.querySelector(`#tf-${this.instanceId}-${index}-${s_index}-true`).disabled = true;
+                    card.querySelector(`#tf-${this.instanceId}-${index}-${s_index}-false`).disabled = true;
+                });
+                
+                card.querySelector('.check-btn').classList.add('hidden');
+                
+                if (allCorrect) {
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+
+            checkShortAnswer(question, index) {
+                if (this.questionStatus[index] !== null) return;
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                const input = card.querySelector('textarea');
+                const userAnswer = input.value.toLowerCase().trim().replace(/-\s/g, '');
+                input.disabled = true;
+
+                let allKeywordsFound = (userAnswer !== "") && question.keywords.every(keyword => userAnswer.includes(keyword.toLowerCase()));
+
+                const explanationDiv = card.querySelector('.explanation-div');
+                explanationDiv.innerHTML = `<strong>Đáp án gợi ý:</strong><br>${question.explanation}`;
+                explanationDiv.classList.remove('hidden');
+                card.querySelector('.check-btn').classList.add('hidden');
+
+                if (allKeywordsFound) {
+                    input.classList.add('correct');
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    input.classList.add('incorrect');
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+            
+            checkFillInBlank(question, index) {
+                if (this.questionStatus[index] !== null) return;
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                let allCorrect = true;
+                
+                question.fills.forEach((fill, f_index) => {
+                    const input = card.querySelector(`input[data-index='${f_index}']`);
+                    const userAnswer = input.value.trim().toLowerCase();
+                    const correctAnswer = fill.a.trim().toLowerCase();
+                    input.disabled = true;
+                    
+                    // Cho phép nhiều đáp án (ví dụ: "0.1 cm" hoặc "1 mm")
+                    const correctAnswers = correctAnswer.split('(hoặc').map(s => s.replace(')', '').trim());
+                    
+                    if (correctAnswers.includes(userAnswer)) {
+                        input.classList.add('correct');
+                    } else {
+                        input.classList.add('incorrect');
+                        allCorrect = false;
+                    }
+                });
+                
+                card.querySelector('.check-btn').classList.add('hidden');
+                
+                if (allCorrect) {
+                    this.questionStatus[index] = 'correct';
+                    this.incorrectQuestions.delete(index);
+                } else {
+                    this.questionStatus[index] = 'incorrect';
+                    this.incorrectQuestions.add(index);
+                    // *** THÊM VÀO LỊCH SỬ LỖI SAI TOÀN CỤC ***
+                    this.markAsWrongInHistory(index);
+                }
+                this.updateProgress();
+            }
+
+            /**
+             * Đánh dấu câu hỏi là sai trong Lịch sử toàn cục
+             */
+            markAsWrongInHistory(localIndex) {
+                const originalIndex = this.quizData[localIndex].originalIndex;
+                if (!wrongQuestionHistory.has(originalIndex)) {
+                    wrongQuestionHistory.add(originalIndex);
+                    saveWrongHistory(); // Lưu vào localStorage
+                }
+                saveProgress(this); // Lưu tiến độ sau khi đánh dấu câu sai
+            }
+            
+            // --- CÁC HÀM TIỆN ÍCH CỦA INSTANCE ---
+            resetQuestion(index) {
+                const card = this.container.querySelector(`.quiz-card[data-index='${index}']`);
+                if (!card) return;
+                
+                const wasIncorrect = this.questionStatus[index] === 'incorrect';
+                this.questionStatus[index] = null;
+                if (wasIncorrect) {
+                    this.incorrectQuestions.delete(index);
+                }
+                
+                card.querySelectorAll('.option-btn').forEach(btn => {
+                    btn.classList.remove('correct', 'incorrect'); btn.disabled = false;
+                });
+                card.querySelectorAll('.tf-input').forEach(input => {
+                    input.checked = false; input.disabled = false;
+                });
+                card.querySelectorAll('.tf-label').forEach(label => {
+                    label.classList.remove('correct', 'incorrect');
+                });
+                card.querySelectorAll('textarea').forEach(input => {
+                    input.value = ''; input.disabled = false; input.classList.remove('correct', 'incorrect');
+                });
+                card.querySelectorAll('.explanation-div').forEach(div => {
+                    div.classList.add('hidden'); div.innerHTML = '';
+                });
+                card.querySelectorAll('input[type="text"]').forEach(input => {
+                    input.value = ''; input.disabled = false; input.classList.remove('correct', 'incorrect');
+                });
+                card.querySelectorAll('.check-btn').forEach(btn => {
+                    btn.classList.remove('hidden');
+                });
+
+                this.updateProgress();
+            }
+
+            updateProgress() {
+                const completedCount = this.questionStatus.filter(s => s !== null).length;
+                this.progressText.innerText = `Đã hoàn thành: ${completedCount} / ${this.quizData.length}`;
+                
+                const incorrectCount = this.incorrectQuestions.size;
+                this.scoreTracker.innerText = `Câu sai: ${incorrectCount}`;
+                
+                // Lưu tiến độ sau mỗi lần cập nhật
+                saveProgress(this);
+            }
+
+            shuffle() {
+                this.quizData.sort(() => Math.random() - 0.5);
+                this.quizData.forEach(question => {
+                    if (question.type === 'mc' && question.options) {
+                        question.options.sort(() => Math.random() - 0.5);
+                    }
+                    if (question.type === 'tf' && question.statements) {
+                        question.statements.sort(() => Math.random() - 0.5);
+                    }
+                });
+                this.init();
+            }
+
+            reset() {
+                localStorage.removeItem(`quiz-progress-${this.instanceId}`);
+                this.quizData = JSON.parse(JSON.stringify(this.originalData));
+                this.questionStatus = new Array(this.quizData.length).fill(null);
+                this.incorrectQuestions.clear();
+                this.init();
+            }
+        } // --- HẾT LỚP QUIZ ---
+
+
+        /**
+         * Check và load tiến độ khi khởi động
+         */
+        function checkAndLoadProgress() {
+            if (mainQuiz) {
+                loadProgress(mainQuiz);
+                mainQuiz.init();
+            }
+            if (redoQuiz) {
+                loadProgress(redoQuiz);
+                redoQuiz.init();
+            }
+        }
+
+        // --- CÁC HÀM QUẢN LÝ TAB VÀ LỊCH SỬ ---
+
+        /**
+         * Tải lịch sử lỗi sai từ localStorage
+         */
+        function loadWrongHistory() {
+            const storedHistory = localStorage.getItem('wrongQuestionIndices');
+            if (storedHistory) {
+                wrongQuestionHistory = new Set(JSON.parse(storedHistory));
+            } else {
+                wrongQuestionHistory = new Set();
+            }
+        }
+
+        /**
+         * Lưu lịch sử lỗi sai vào localStorage
+         */
+        function saveWrongHistory() {
+            localStorage.setItem('wrongQuestionIndices', JSON.stringify(Array.from(wrongQuestionHistory)));
+            // Cập nhật số đếm trên tab "Hay Sai"
+            document.getElementById('wrong-history-count').innerText = wrongQuestionHistory.size;
+        }
+
+        /**
+         * Xóa toàn bộ lịch sử lỗi sai
+         */
+        function clearWrongHistory() {
+            // Tạm thời chỉ xóa, không hỏi
+            wrongQuestionHistory.clear();
+            saveWrongHistory();
+            renderWrongHistoryTab();
+            if (redoQuiz) {
+                redoQuiz.container.innerHTML = '';
+                redoQuiz = null;
+            }
+            renderRedoMcTab();
+        }
+
+        /**
+         * Vẽ nội dung cho tab "Những Câu Hay Sai" (TĨNH)
+         */
+        function renderWrongHistoryTab() {
+            const container = document.getElementById('quiz-container-wrong');
+            container.innerHTML = '';
+            document.getElementById('wrong-history-count').innerText = wrongQuestionHistory.size;
+
+            if (wrongQuestionHistory.size === 0) {
+                container.innerHTML = `<p class="text-center text-gray-500 italic">Tuyệt vời! Bạn chưa làm sai câu nào.</p>`;
+                return;
+            }
+
+            for (const index of wrongQuestionHistory) {
+                const question = originalQuizData[index]; // Lấy từ data gốc, không có index
+                if (!question) continue;
+
+                const card = document.createElement('div');
+                card.className = 'static-card';
+                
+                let contentHtml = '';
+                if (question.type === 'mc') {
+                    question.options.forEach(option => {
+                        const isCorrect = (option === question.answer);
+                        contentHtml += `<div class="static-card-option ${isCorrect ? 'correct' : ''}">${option}</div>`;
+                    });
+                }
+                else {
+                    // Hiển thị đáp án cho các loại khác
+                    if (question.explanation) {
+                        contentHtml = `<div class="static-card-option correct !text-left !font-normal"><strong>Đáp án:</strong><br>${question.explanation}</div>`;
+                    } else if (question.type === 'tf') {
+                        contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
+                        question.statements.forEach(s => {
+                            contentHtml += `<li><strong>${s.text}:</strong> ${s.answer ? 'Đúng' : 'Sai'}</li>`;
+                        });
+                        contentHtml += '</ul></div>';
+                    } else if (question.type === 'fill') {
+                        contentHtml = '<div class="static-card-option !text-left !font-normal"><ul>';
+                        question.fills.forEach(f => {
+                            contentHtml += `<li><strong>${f.q}</strong> ${f.a} ${f.s}</li>`;
+                        });
+                        contentHtml += '</ul></div>';
+                    }
+                }
+
+                card.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">${question.question}</h2>
+                    <div>${contentHtml}</div>
+                `;
+                container.appendChild(card);
+            }
+        }
+
+        /**
+         * Vẽ nội dung cho tab "Làm Lại Câu Sai (MC)" (TƯƠNG TÁC)
+         */
+        function renderRedoMcTab() {
+            // Lọc các câu MC bị sai từ dữ liệu gốc
+            const redoData = originalDataWithIndices.filter(q => 
+                q.type === 'mc' && wrongQuestionHistory.has(q.originalIndex)
+            );
+
+            // Nếu có quiz làm lại cũ, hủy nó đi
+            if (redoQuiz) {
+                redoQuiz.container.innerHTML = '';
+                redoQuiz = null;
+            }
+            
+            // Tạo một instance Quiz mới cho các câu hỏi này
+            redoQuiz = new Quiz(
+                redoData,
+                'quiz-container-redo',
+                'progress-text-redo',
+                'score-tracker-redo'
+            );
+            redoQuiz.init();
+        }
+
+        /**
+         * Chuyển đổi giữa các tab
+         */
+        function showTab(tabName) {
+            // Ẩn tất cả panels
+            document.querySelectorAll('.tab-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            // Bỏ active tất cả tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Ẩn tất cả sub-headers
+            document.querySelectorAll('.subheader-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+
+            // Hiển thị panel và button được chọn
+            document.getElementById(`tab-panel-${tabName}`).classList.add('active');
+            document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+
+            // Hiển thị sub-header được chọn
+            document.getElementById(`subheader-${tabName}`).classList.add('active');
+
+            // Tải nội dung cho tab nếu cần
+            if (tabName === 'wrong') {
+                renderWrongHistoryTab();
+            } else if (tabName === 'redo') {
+                renderRedoMcTab();
+            }
+        }
+
+        // --- KHỞI ĐỘNG KHI TẢI TRANG ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadWrongHistory(); // Tải lịch sử lỗi sai
+
+            // --- Gắn sự kiện cho các nút điều khiển ---
+            // Tab 1 (Tất Cả)
+            document.getElementById('shuffle-btn').addEventListener('click', () => mainQuiz.shuffle());
+            document.getElementById('total-reset-btn').addEventListener('click', () => mainQuiz.reset());
+            // Tab 2 (Hay Sai)
+            document.getElementById('clear-history-btn').addEventListener('click', clearWrongHistory);
+            
+            // *** GẮN SỰ KIỆN CHO TAB 3 ***
+            document.getElementById('shuffle-btn-redo').addEventListener('click', () => {
+                if (redoQuiz) {
+                    redoQuiz.shuffle();
+                }
+            });
+            document.getElementById('reset-btn-redo').addEventListener('click', () => {
+                if (redoQuiz) {
+                    redoQuiz.reset();
+                }
+            });
+            
+            // --- Gắn sự kiện cho các nút Tab ---
+            document.getElementById('tab-btn-all').addEventListener('click', () => showTab('all'));
+            document.getElementById('tab-btn-wrong').addEventListener('click', () => showTab('wrong'));
+            document.getElementById('tab-btn-redo').addEventListener('click', () => showTab('redo'));
+
+            // --- Khởi tạo Quiz chính (Tab "Tất Cả") ---
+            mainQuiz = new Quiz(
+                originalDataWithIndices, // Dùng data đã có index gốc
+                'quiz-container-all',
+                'progress-text-all',
+                'score-tracker-all'
+            );
+            mainQuiz.init();
+            
+            // Cập nhật số đếm ban đầu
+            document.getElementById('wrong-history-count').innerText = wrongQuestionHistory.size;
+        });
+
+    </script>
+</body>
+</html>
+
